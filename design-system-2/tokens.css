@@ -1,0 +1,93 @@
+/* Red Thread — generated from tokens.json by scripts/build_preview.py. Do not edit by hand. */
+
+:root, [data-theme="night"] {
+  --ground: #0b0b0d;
+  --surface: #141417;
+  --surface-raised: #1d1d22;
+  --line: #2a2a31;
+  --line-strong: #70707b;
+  --ink: #ece8e1;
+  --ink-muted: #9a958d;
+  --thread: #e4142c;
+  --thread-text: #ff5a6a;
+  --thread-deep: #a00c22;
+  --on-thread: #ffffff;
+  --focus: #ff5a6a;
+  --manila: #d6c8a8;
+  --manila-ink: #1a1714;
+  --manila-thread: #8f0d22;
+  --manila-line: #a8987a;
+  --note: #f3efe6;
+  --note-ink: #16140f;
+  --note-ink-muted: #5a554b;
+  --note-accent: #b00e27;
+  --note-line: #d3ccbc;
+  --evidence: #ffffff;
+  --evidence-ink: #1c1c1e;
+  --evidence-ink-muted: #5e5e62;
+  --evidence-line: #d4d4d8;
+  --evidence-mark: #8f0d22;
+  --device: #2b2b2e;
+  --brass: #b8935a;
+  --solved: #6cc4ae;
+  --shadow-object: 0 1px 0 rgba(0,0,0,0.6), 0 14px 32px rgba(0,0,0,0.55);
+  --shadow-object-drop: drop-shadow(0 1px 0 rgba(0,0,0,0.6)) drop-shadow(0 12px 18px rgba(0,0,0,0.5));
+}
+
+[data-theme="paper"] {
+  --ground: #fbfaf7;
+  --surface: #f2f0eb;
+  --surface-raised: #e9e6df;
+  --line: #dcd8cf;
+  --line-strong: #857f74;
+  --ink: #16140f;
+  --ink-muted: #58534a;
+  --thread: #e4142c;
+  --thread-text: #c20f2b;
+  --thread-deep: #a00c22;
+  --focus: #c20f2b;
+  --manila: #d6c8a8;
+  --brass: #7d5f2e;
+  --solved: #1f6f5c;
+  --shadow-object: 0 1px 1px rgba(22,20,15,0.14), 0 10px 24px rgba(22,20,15,0.16);
+  --shadow-object-drop: drop-shadow(0 1px 1px rgba(22,20,15,0.18)) drop-shadow(0 8px 14px rgba(22,20,15,0.16));
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-evidence: 0;
+  --radius-tag: 6px;
+  --radius-control: 10px;
+  --radius-note: 16px;
+  --radius-device: 52px;
+  --radius-pill: 999px;
+  --thread-width: 2px;
+  --thread-width-hero: 3px;
+  --font-serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+  --font-sans: Inter, "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --font-receipt: "Share Tech Mono", "Courier New", ui-monospace, monospace;
+  --font-doc: Arimo, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-hand: Caveat, "Segoe Print", "Bradley Hand", cursive;
+  --font-device: -apple-system, "SF Pro Text", Inter, system-ui, sans-serif;
+}
+
+.display-xl { font-family: var(--font-serif); font-size: 96px; line-height: 0.95; font-weight: 400; letter-spacing: -0.01em; }
+.display-l { font-family: var(--font-serif); font-size: 64px; line-height: 1; font-weight: 400; letter-spacing: -0.01em; }
+.heading { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; }
+.heading-italic { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; font-style: italic; }
+.title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 600; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 26px; font-weight: 400; }
+.small { font-family: var(--font-sans); font-size: 14px; line-height: 22px; font-weight: 400; }
+.label { font-family: var(--font-mono); font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: 0.14em; }
+.evidence { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; }
+.doc-body { font-family: var(--font-doc); font-size: 13px; line-height: 18px; font-weight: 400; }
+.receipt { font-family: var(--font-receipt); font-size: 13px; line-height: 17px; font-weight: 400; }
+.hand { font-family: var(--font-hand); font-size: 24px; line-height: 28px; font-weight: 500; }

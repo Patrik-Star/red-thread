@@ -1,0 +1,17 @@
+<!-- @dsCard group="Evidence layer" height=520 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Evidence — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 4, title: 'The torn ticket', found: 'Ferry Building, Quay St' },
+      h(RT.Ticket, { operator: 'Harbour Crossings', from: 'Downtown', to: 'Devonport', date: '14 Feb', time: '23:12', fare: '$8.50', torn: true })),
+    h(RT.Evidence, { number: 5, title: 'Gate log', status: 'locked', found: 'Vulcan Lane', lockedText: 'Reach Vulcan Lane and enter the code to open this.' },
+      h(RT.HandwrittenNote, { lines: ['Gate opened 00:14', 'Key returned 00:31', 'Nobody signed.'] }))));
+</script>
+</body>
+</html>

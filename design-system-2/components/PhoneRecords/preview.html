@@ -1,0 +1,21 @@
+<!-- @dsCard group="Evidence layer" height=520 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>PhoneRecords — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 8, title: 'Call record', found: 'Courier envelope, Britomart' },
+      h(RT.PhoneRecords, { carrier: 'Harbourline Mobile', holder: 'D. Hale', number: '021 [redacted] 4471', period: '14 Feb 2027', rows: [
+        { date: '14/02', time: '18:15', dir: 'out', to: '022 [redacted] 908', duration: '4:12' },
+        { date: '14/02', time: '22:58', dir: 'sms', to: '022 [redacted] 908' },
+        { date: '14/02', time: '23:20', dir: 'in', to: 'Withheld', duration: '0:47', marked: true },
+        { date: '14/02', time: '23:36', dir: 'sms', to: '022 [redacted] 908' },
+        { date: '14/02', time: '23:38', dir: 'out', to: '022 [redacted] 908', duration: '0:00' }
+      ], footer: 'Times are NZDT. Calls under 1 second are not charged.' }))));
+</script>
+</body>
+</html>

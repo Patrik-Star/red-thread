@@ -1,0 +1,21 @@
+<!-- @dsCard group="Evidence layer" height=560 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Receipt — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 2, title: 'Dinner for two', found: 'Fort Lane bin' },
+      h(RT.Receipt, { merchant: 'Halfmoon Noodle Bar', address: 'Fort Lane, Auckland CBD', gstNumber: '123-456-789', date: '14/02/2027', time: '22:47', serial: 'Table 6', server: 'Srv: Mere',
+        lines: [{ qty: 2, item: 'Dan dan noodles', price: '$37.00' }, { qty: 1, item: 'Pork buns', price: '$14.50' }, { qty: 2, item: 'Jasmine tea', price: '$9.00' }],
+        total: '$60.50', gst: '$7.89', paid: 'EFTPOS', card: 'Card **** [redacted]', footer: 'Thank you. See you soon.', stamp: 'Paid' })),
+    h(RT.Evidence, {},
+      h(RT.Receipt, { merchant: 'Quay St Kiosk', address: 'Downtown ferry terminal', date: '14/02/2027', time: '23:09',
+        lines: [{ qty: 1, item: 'Long black', price: '$5.00' }, { qty: 1, item: 'Umbrella', price: '$18.00' }],
+        total: '$23.00', paid: 'Cash', tendered: '$50.00', footer: 'Change $27.00' }))));
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!-- @dsCard group="Evidence layer" height=300 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ticket — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, {}, h(RT.Ticket, { operator: 'Harbour Crossings', from: 'Downtown', to: 'Devonport', date: '14 Feb', time: '23:12', fare: '$8.50', serial: 'No. [redacted]' })),
+    h(RT.Evidence, {}, h(RT.Ticket, { operator: 'Harbour Crossings', from: 'Downtown', to: 'Devonport', date: '14 Feb', time: '23:12', fare: '$8.50', torn: true }))));
+</script>
+</body>
+</html>

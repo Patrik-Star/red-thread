@@ -1,0 +1,32 @@
+<!-- @dsCard group="Evidence layer" height=780 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>PhoneScreenshot — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 6, title: 'Messages, unlocked', found: 'Albert Park bench', device: true },
+      h(RT.PhoneScreenshot, { time: '23:41', battery: 18, contact: 'Daniel Hale', messages: [
+        { day: 'Today 22:58' },
+        { from: 'them', text: 'Are you still at the restaurant?' },
+        { from: 'me', text: 'Just left. Walking to the ferry.' },
+        { from: 'them', text: 'Don’t. Meet me at the steps instead.' },
+        { from: 'me', text: 'It’s nearly midnight' },
+        { receipt: 'Delivered' },
+        { day: '23:36' },
+        { from: 'them', text: 'Bring the ledger. Come alone.' }
+      ] })),
+    h(RT.Evidence, { number: 7, title: 'Recent calls', found: 'Same phone', device: true },
+      h(RT.PhoneScreenshot, { time: '23:44', battery: 17, app: 'calls', calls: [
+        { name: 'Daniel Hale', time: '23:38', missed: true },
+        { name: '021 [redacted]', time: '23:20' },
+        { name: 'Mum', time: '20:02', kind: 'home' },
+        { name: 'Daniel Hale', time: '18:15' },
+        { name: 'Halfmoon Noodle Bar', time: '17:41', kind: 'work' }
+      ] }))));
+</script>
+</body>
+</html>
