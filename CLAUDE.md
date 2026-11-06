@@ -19,7 +19,7 @@ Red Thread is a phone-run **outdoor escape room** for groups of friends: solve a
 | `decisions/log.md` | Dated decisions and why (append-only) |
 | `playtests/` | One file per playtest session |
 | `templates/` | Starting points for new cases and playtest logs |
-| `design-system/` | Brand and UI design system: brand book (`README.md`), `Colour.md`, `tokens.json`, React components. Mirror of the live Design System artifact: https://claude.ai/artifact/HTSicb4XPKRxgkqMbbGGxx |
+| `design-system/` | Brand and UI design system: brand book (`README.md`), `Colour.md`, `tokens.json`, React components. Mirror of the live Design System artifact: https://claude.ai/artifact/HTSicb4XPKRxgkqMbbGGxx. **To view it, open `design-system/preview.html`** (self-contained). The `components/*/preview.html` files are fragments and show nothing on their own. After changing tokens or components, rerun `python3 design-system/scripts/build_preview.py` to regenerate `preview.html` and `tokens.css`. |
 | `.claude/skills/` | Project skills (see below) |
 
 Notion is the original home of these documents (page IDs in `context/overview.md`). The repo is now the source of truth; use the `notion-sync` skill to push updates back.
