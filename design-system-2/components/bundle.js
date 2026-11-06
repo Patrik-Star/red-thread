@@ -1,0 +1,215 @@
+/* @ds-bundle: {"format":4,"namespace":"RedThread","components":[{"name":"Wordmark"},{"name":"Button"},{"name":"CaseTag"},{"name":"ThreadDivider"},{"name":"GameNote"},{"name":"Evidence"},{"name":"Receipt"},{"name":"PhoneScreenshot"},{"name":"PhoneRecords"},{"name":"BankStatement"},{"name":"Ticket"},{"name":"HandwrittenNote"},{"name":"CctvStill"}]} */
+(function () {
+  var R = window.React, h = R.createElement;
+  function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  function pad(n) { return n != null ? String(n).padStart(2, '0') : ''; }
+  // "[redacted]" inside any evidence string becomes a black bar.
+  function txt(s) {
+    if (typeof s !== 'string' || s.indexOf('[redacted]') < 0) return s;
+    return s.split('[redacted]').reduce(function (acc, part, i) {
+      if (i) acc.push(h('span', { key: 'r' + i, className: 'rt-redact', role: 'img', 'aria-label': 'redacted' }));
+      if (part) acc.push(part);
+      return acc;
+    }, []);
+  }
+
+  /* ---------- Game layer ---------- */
+
+  function Wordmark(p) {
+    var size = p.size || 'md';
+    return h('span', { className: cx('rt-wordmark', 'rt-wordmark-' + size, p.className), role: 'img', 'aria-label': 'Red Thread' },
+      h('svg', { className: 'rt-wordmark-thread', viewBox: '0 0 100 10', preserveAspectRatio: 'none', 'aria-hidden': true },
+        h('path', { d: 'M0 3 C 18 9, 40 10, 62 8 S 90 4, 100 2' })),
+      h('span', { className: 'rt-wordmark-text', 'aria-hidden': true }, 'Red Thread'),
+      h('span', { className: 'rt-wordmark-pin', 'aria-hidden': true }));
+  }
+
+  function Button(p) {
+    var variant = p.variant || 'ghost', size = p.size || 'md';
+    var rest = {};
+    for (var k in p) if (k !== 'variant' && k !== 'size' && k !== 'className' && k !== 'children') rest[k] = p[k];
+    rest.className = cx('rt-btn', 'rt-btn-' + variant, size === 'sm' && 'rt-btn-sm', p.className);
+    if (!rest.type) rest.type = 'button';
+    return h('button', rest, p.children);
+  }
+
+  function CaseTag(p) {
+    return h('span', { className: cx('rt-tag', 'rt-tag-' + (p.tone || 'neutral'), p.className) }, p.children);
+  }
+
+  function ThreadDivider(p) {
+    return h('div', { className: cx('rt-divider', p.className), role: 'separator' },
+      p.label ? h('span', null, p.label) : h('span', { className: 'rt-divider-knot', 'aria-hidden': true }));
+  }
+
+  function CodeCells(p) {
+    var n = p.length || 4;
+    var refs = R.useRef([]);
+    var st = R.useState(Array(n).fill('')), vals = st[0], setVals = st[1];
+    function change(i, e) {
+      var c = e.target.value.slice(-1).toUpperCase();
+      var next = vals.slice(); next[i] = c; setVals(next);
+      if (c && i < n - 1) refs.current[i + 1].focus();
+      if (next.every(Boolean) && p.onComplete) p.onComplete(next.join(''));
+    }
+    function key(i, e) { if (e.key === 'Backspace' && !vals[i] && i > 0) refs.current[i - 1].focus(); }
+    var id = R.useId ? R.useId() : 'code';
+    return h('div', { className: 'rt-note-code' },
+      h('label', { className: 'rt-note-code-label', htmlFor: id + '0' }, p.label || 'Unlock code'),
+      h('div', { className: 'rt-note-code-cells', role: 'group', 'aria-label': p.label || 'Unlock code' },
+        vals.map(function (v, i) {
+          return h('input', { key: i, id: id + i, ref: function (el) { refs.current[i] = el; }, value: v, inputMode: p.numeric ? 'numeric' : 'text', autoComplete: 'off', maxLength: 2, disabled: p.disabled, 'aria-label': 'Character ' + (i + 1) + ' of ' + n, onChange: function (e) { change(i, e); }, onKeyDown: function (e) { key(i, e); } });
+        })),
+      p.message ? h('p', { className: 'rt-note-code-msg', 'data-state': p.state || undefined, role: p.state === 'wrong' ? 'alert' : undefined }, p.message) : null);
+  }
+
+  function GameNote(p) {
+    var kind = p.kind || 'instruction';
+    return h('section', { className: cx('rt-note', 'rt-note-' + kind, p.className), 'aria-label': p.ariaLabel },
+      p.title ? h('h3', { className: 'rt-note-title' }, p.title) : null,
+      p.children ? h('div', { className: 'rt-note-body' }, p.children) : null,
+      kind === 'unlock' ? h(CodeCells, { length: p.codeLength, numeric: p.numeric, label: p.codeLabel, message: p.codeMessage, state: p.codeState, onComplete: p.onCode, disabled: p.disabled }) : null,
+      (p.meta || p.metaEnd) ? h('div', { className: 'rt-note-meta' }, h('span', null, p.meta), p.metaEnd ? h('span', null, p.metaEnd) : null) : null);
+  }
+
+  function EvidenceTag(p) {
+    var status = p.status || 'new';
+    return h('div', { className: 'rt-tagm' },
+      h('span', { className: 'rt-tagm-hole', 'aria-hidden': true }),
+      h('div', { className: 'rt-tagm-meta' }, h('span', null, 'Evidence ' + pad(p.number)), h('span', null, { 'new': 'New', found: 'Filed', locked: 'Locked' }[status])),
+      p.title ? h('h3', { className: 'rt-tagm-title' }, p.title) : null,
+      p.found ? h('div', { className: 'rt-tagm-found' }, h('span', null, 'Found '), p.found) : null);
+  }
+
+  function Evidence(p) {
+    var status = p.status || 'new';
+    var device = p.device;
+    return h('figure', { className: cx('rt-ev', 'rt-ev-' + status, p.className), style: { margin: 0 } },
+      (p.number != null || p.title) ? h(EvidenceTag, { number: p.number, status: status, title: p.title, found: p.found }) : null,
+      h('div', { className: cx('rt-ev-object', device && 'rt-ev-object-device') },
+        h('div', { 'aria-hidden': status === 'locked' ? true : undefined }, p.children),
+        status === 'locked' ? h('div', { className: 'rt-ev-lock' }, h('div', { className: 'rt-note' }, h('div', { className: 'rt-note-body' }, p.lockedText || 'Reach the location to open this.'))) : null),
+      p.caption ? h('figcaption', { className: 'rt-sr' }, p.caption) : null);
+  }
+
+  /* ---------- Story layer: evidence objects ---------- */
+
+  function Receipt(p) {
+    var lines = p.lines || [];
+    return h('div', { className: 'rt-paper rt-receipt' },
+      h('div', { className: 'rt-receipt-head' },
+        h('div', { className: 'rt-receipt-merchant' }, p.merchant),
+        p.address ? h('div', null, p.address) : null,
+        p.gstNumber ? h('div', { className: 'rt-receipt-muted' }, 'GST No. ' + p.gstNumber) : null),
+      h('div', { className: 'rt-receipt-row' }, h('span', null, p.date), h('span', null, p.time)),
+      p.serial ? h('div', { className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, p.serial), h('span', null, p.server || '')) : null,
+      h('hr', { className: 'rt-receipt-rule' }),
+      lines.map(function (l, i) {
+        return h('div', { key: i, className: 'rt-receipt-row' }, h('span', null, txt((l.qty ? l.qty + ' x ' : '') + l.item)), h('span', null, l.price));
+      }),
+      h('hr', { className: 'rt-receipt-rule' }),
+      h('div', { className: 'rt-receipt-row rt-receipt-total' }, h('span', null, 'Total'), h('span', null, p.total)),
+      p.gst ? h('div', { className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, 'Incl. GST 15%'), h('span', null, p.gst)) : null,
+      p.paid ? h('div', { className: 'rt-receipt-row' }, h('span', null, p.paid), h('span', null, p.tendered || p.total)) : null,
+      p.card ? h('div', { className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, txt(p.card)), h('span', null, '')) : null,
+      p.footer ? h('div', { className: 'rt-receipt-foot' }, p.footer) : null,
+      p.stamp ? h('div', { className: 'rt-receipt-stamp' }, h('span', { className: 'rt-stamp' }, p.stamp)) : null);
+  }
+
+  function Bars() { return h('span', { className: 'rt-phone-bars' }, [4, 6, 8, 11].map(function (v, i) { return h('i', { key: i, style: { height: v } }); })); }
+
+  function PhoneScreenshot(p) {
+    var screen;
+    if (p.children) screen = p.children;
+    else if (p.app === 'calls') {
+      screen = [
+        h('div', { key: 't', className: 'rt-phone-title' }, 'Recents'),
+        (p.calls || []).map(function (c, i) {
+          return h('div', { key: i, className: cx('rt-phone-call', c.missed && 'rt-phone-call-missed') },
+            h('div', null, h('b', null, txt(c.name)), h('small', null, c.missed ? 'Missed · ' + (c.kind || 'mobile') : (c.kind || 'mobile'))),
+            h('time', null, c.time));
+        })];
+    } else {
+      var initials = (p.contact || '?').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 2);
+      screen = [
+        h('div', { key: 'h', className: 'rt-phone-head' }, h('span', { className: 'rt-phone-avatar', 'aria-hidden': true }, initials), h('span', { className: 'rt-phone-name' }, p.contact)),
+        h('div', { key: 'm', className: 'rt-phone-thread' },
+          (p.messages || []).map(function (m, i) {
+            if (m.day) return h('div', { key: i, className: 'rt-phone-day' }, m.day);
+            if (m.receipt) return h('div', { key: i, className: 'rt-phone-receipt' }, m.receipt);
+            return h('div', { key: i, className: cx('rt-bubble', 'rt-bubble-' + (m.from === 'me' ? 'me' : 'them')) }, txt(m.text));
+          }))];
+    }
+    return h('div', { className: 'rt-phone', role: 'img', 'aria-label': p.label || ('Screenshot of a phone' + (p.contact ? ': messages with ' + p.contact : '')) },
+      h('div', { className: 'rt-phone-screen' },
+        h('span', { className: 'rt-phone-island', 'aria-hidden': true }),
+        h('div', { className: 'rt-phone-status', 'aria-hidden': true }, h('span', null, p.time || '23:41'),
+          h('span', { className: 'rt-phone-status-r' }, h(Bars), h('span', { className: 'rt-phone-batt' }, h('b', { style: { width: (p.battery != null ? p.battery : 34) + '%' } })))),
+        screen,
+        h('span', { className: 'rt-phone-home', 'aria-hidden': true })));
+  }
+
+  function DocHead(p) {
+    return [
+      h('div', { key: 'h', className: 'rt-doc-head' }, h('div', { className: 'rt-doc-org' }, p.org), h('div', { className: 'rt-doc-title' }, p.title)),
+      p.info ? h('dl', { key: 'i', className: 'rt-doc-info' }, p.info.reduce(function (a, kv, i) { a.push(h('dt', { key: 'k' + i }, kv[0]), h('dd', { key: 'v' + i }, txt(kv[1]))); return a; }, [])) : null];
+  }
+
+  function PhoneRecords(p) {
+    var dirs = { out: 'Outgoing', 'in': 'Incoming', missed: 'Missed', sms: 'SMS out', 'sms-in': 'SMS in' };
+    return h('div', { className: 'rt-paper rt-doc' },
+      DocHead({ org: p.carrier, title: 'Itemised call record', info: [['Account holder', p.holder], ['Number', p.number], ['Period', p.period]].filter(function (r) { return r[1]; }) }),
+      h('table', null,
+        h('thead', null, h('tr', null, ['Date', 'Time', 'Type', 'Number', 'Duration'].map(function (c, i) { return h('th', { key: c, className: i === 4 ? 'rt-num' : undefined }, c); }))),
+        h('tbody', null, (p.rows || []).map(function (r, i) {
+          return h('tr', { key: i, className: r.marked ? 'rt-marked' : undefined },
+            h('td', null, r.date), h('td', null, r.time), h('td', null, h('span', { className: 'rt-dir' }, dirs[r.dir] || r.dir)), h('td', null, txt(r.to)), h('td', { className: 'rt-num' }, r.duration || '—'));
+        }))),
+      p.footer ? h('div', { className: 'rt-doc-foot' }, p.footer) : null);
+  }
+
+  function BankStatement(p) {
+    return h('div', { className: 'rt-paper rt-doc' },
+      DocHead({ org: p.bank, title: 'Statement', info: [['Account', p.account], ['Name', p.holder], ['Period', p.period]].filter(function (r) { return r[1]; }) }),
+      h('table', null,
+        h('thead', null, h('tr', null, ['Date', 'Details', 'Out', 'In', 'Balance'].map(function (c, i) { return h('th', { key: c, className: i > 1 ? 'rt-num' : undefined }, c); }))),
+        h('tbody', null, (p.rows || []).map(function (r, i) {
+          return h('tr', { key: i, className: r.marked ? 'rt-marked' : undefined },
+            h('td', null, r.date), h('td', { className: 'rt-wrap' }, txt(r.details)), h('td', { className: 'rt-num' }, r.out || ''), h('td', { className: 'rt-num' }, r['in'] || ''), h('td', { className: 'rt-num' }, r.balance || ''));
+        }))),
+      p.footer ? h('div', { className: 'rt-doc-foot' }, p.footer) : null);
+  }
+
+  function Ticket(p) {
+    return h('div', { className: cx('rt-paper rt-ticket', p.torn && 'rt-ticket-torn') },
+      h('div', { className: 'rt-ticket-main' },
+        h('div', { className: 'rt-ticket-op' }, p.operator),
+        h('div', { className: 'rt-ticket-route' }, h('span', null, p.from), h('i', { 'aria-label': 'to' }, 'to'), h('span', null, p.to)),
+        h('dl', { className: 'rt-ticket-grid' },
+          h('dt', null, 'Date'), h('dt', null, 'Sailing'), h('dt', null, 'Fare'),
+          h('dd', null, p.date), h('dd', null, p.time), h('dd', null, p.fare))),
+      h('div', { className: 'rt-ticket-stub', 'aria-hidden': p.torn ? true : undefined },
+        h('span', null, 'Adult'), h('b', null, p.time), h('span', null, txt(p.serial || ''))));
+  }
+
+  function HandwrittenNote(p) {
+    var lines = Array.isArray(p.lines) ? p.lines : [p.children];
+    return h('div', { className: cx('rt-paper rt-hand', p.paper === 'plain' && 'rt-hand-plain') },
+      lines.map(function (l, i) { return h('p', { key: i }, txt(l)); }),
+      p.signed ? h('p', { className: 'rt-hand-sign' }, p.signed) : null);
+  }
+
+  function CctvStill(p) {
+    return h('div', { className: 'rt-paper rt-cctv' },
+      p.src ? h('img', { src: p.src, alt: p.alt || '' }) : h('div', { className: 'rt-cctv-empty' }, p.alt || 'Still image supplied per case. Show places, never victims.'),
+      h('div', { className: 'rt-cctv-burn top', 'aria-hidden': !!p.src || undefined }, h('span', { className: 'rt-cctv-rec' }, p.camera || 'CAM 03'), h('span', null, p.place || '')),
+      h('div', { className: 'rt-cctv-burn bottom' }, h('span', null, p.date), h('span', null, p.timestamp)));
+  }
+
+  window.RedThread = Object.assign(window.RedThread || {}, {
+    Wordmark: Wordmark, Button: Button, CaseTag: CaseTag, ThreadDivider: ThreadDivider,
+    GameNote: GameNote, Evidence: Evidence, EvidenceTag: EvidenceTag,
+    Receipt: Receipt, PhoneScreenshot: PhoneScreenshot, PhoneRecords: PhoneRecords, BankStatement: BankStatement,
+    Ticket: Ticket, HandwrittenNote: HandwrittenNote, CctvStill: CctvStill
+  });
+})();

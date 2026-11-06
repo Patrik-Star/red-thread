@@ -1,0 +1,15 @@
+<!-- @dsCard group="Evidence layer" height=380 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>CctvStill — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 10, title: 'Camera 3', found: 'Security office request' },
+      h(RT.CctvStill, { camera: 'CAM 03', place: 'QUAY ST W', date: '14-02-2027', timestamp: '23:14:52' }))));
+</script>
+</body>
+</html>

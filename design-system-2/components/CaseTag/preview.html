@@ -1,0 +1,12 @@
+<!-- @dsCard group="Status" height=72 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>CaseTag — preview</title></head>
+<body>
+<div id="root" class="rt-row"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null, h(RT.CaseTag, { tone: 'open' }, 'Case 07 · Open'), h(RT.CaseTag, { tone: 'solved' }, 'Case 03 · Solved'), h(RT.CaseTag, null, 'Team of 4')));
+</script>
+</body>
+</html>

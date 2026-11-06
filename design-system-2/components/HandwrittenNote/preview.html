@@ -1,0 +1,16 @@
+<!-- @dsCard group="Evidence layer" height=380 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>HandwrittenNote — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 3, title: 'Under the plate', found: 'Halfmoon Noodle Bar' },
+      h(RT.HandwrittenNote, { lines: ['Meet me at the steps.', '11:30. Come alone.', 'Bring the ledger.'], signed: '— R' })),
+    h(RT.Evidence, {}, h(RT.HandwrittenNote, { paper: 'plain', lines: ['Locker 14', 'code is her birthday'] }))));
+</script>
+</body>
+</html>

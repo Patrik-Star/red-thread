@@ -1,0 +1,52 @@
+<!-- @dsCard height=320 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Red Thread</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--ground); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; height:320px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:320px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:320px; overflow:visible; }
+  .brand { fill:var(--thread); }
+  .tint { fill:var(--manila); }
+  .deep { fill:var(--ink); }
+  .metal { fill:var(--brass); }
+  .sq { rx:var(--radius-tag); }
+  .thread { fill:none; stroke:var(--thread); stroke-width:var(--thread-width-hero); stroke-linecap:round; }
+  .knot { fill:var(--ground); stroke:var(--thread); stroke-width:var(--thread-width); }
+  .words { position:absolute; left:var(--space-12); bottom:var(--space-8); max-width:440px; }
+  .name { margin:0; font-family:var(--font-serif); font-weight:400; font-size:104px; line-height:.95; letter-spacing:-.01em; color:var(--ink); }
+  .tag { margin:var(--space-3) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 320" width="480" height="320">
+<!--
+  blocks      thread 128×248 slab bled off the top (the spool the thread is pulled from) · manila folder 160×200 + 64×24 tab (evidence) · ink 112×160 bleeding off the right · brass 64×24 tag — ≈27% of 960×320
+  arrangement one tall red slab with satellites on a corkboard: slab, folder, ink block staggered downward left to right, space-8 gutters
+  pattern     literal motif, from the README's thread rule ("one continuous thread, tied off at pins"): one thread-width-hero string leaves the slab, sags through three knots (ground fill, thread ring) and exits the right edge
+  scales      sides in space-8/space-6 multiples; gutters space-8; corners radius-tag; knots r=6 (radius-pill discs); stroke thread-width-hero, knot ring thread-width
+-->
+<rect class="brand sq" x="32" y="-8" width="128" height="248" rx="2"/>
+<rect class="metal sq" x="32" y="256" width="64" height="24" rx="2"/>
+<rect class="tint sq" x="192" y="56" width="64" height="32" rx="2"/>
+<rect class="tint sq" x="192" y="72" width="160" height="200" rx="2"/>
+<rect class="deep sq" x="384" y="128" width="112" height="160" rx="2"/>
+<path class="thread" d="M160 112 Q200 130 240 128 Q278 184 320 232 Q376 214 424 176 Q458 128 490 88"/>
+<circle class="knot" cx="240" cy="128" r="6"/>
+<circle class="knot" cx="320" cy="232" r="6"/>
+<circle class="knot" cx="424" cy="176" r="6"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Red<br>Thread</h1>
+<p class="tag">Follow the thread. Solve the city.</p>
+</div>
+</div>
+</body>
+</html>

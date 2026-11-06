@@ -1,0 +1,12 @@
+<!-- @dsCard group="Actions" height=96 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Button — preview</title></head>
+<body>
+<div id="root" class="rt-row"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null, h(RT.Button, { variant: 'primary' }, 'Open the case file'), h(RT.Button, null, 'Ask for a hint'), h(RT.Button, { size: 'sm' }, 'View map'), h(RT.Button, { variant: 'primary', disabled: true }, 'Submit your accusation')));
+</script>
+</body>
+</html>

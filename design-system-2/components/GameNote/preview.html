@@ -1,0 +1,26 @@
+<!-- @dsCard group="Game layer" height=560 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>GameNote — preview</title>
+<style>.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--space-6);padding:var(--space-6);align-items:start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  function Unlock() {
+    var s = React.useState(null), st = s[0], set = s[1];
+    return h(RT.GameNote, { kind: 'unlock', title: 'The year above the door', codeLength: 4, numeric: true,
+      codeMessage: st === 'wrong' ? 'That doesn’t hold. Count the numerals again.' : 'Four digits, carved in stone.', codeState: st,
+      onCode: function (v) { set(v === '1886' ? null : 'wrong'); }, meta: 'Stop 4 of 8', metaEnd: 'Vulcan Lane' },
+      h('p', null, 'Stand at the bottom of Vulcan Lane and look up at the oldest building. The year it was built opens the next stop.'));
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'grid' },
+    h(RT.GameNote, { title: 'Head to the Ferry Building', meta: 'Stop 3 of 8', metaEnd: 'About 6 min on foot' },
+      h('p', null, 'Walk down Queen Street to the water. Stand under the clock, facing the harbour.'),
+      h('p', null, 'Only the team’s ', h('em', null, 'navigator'), ' can see the next piece of evidence.')),
+    h(Unlock),
+    h(RT.GameNote, { kind: 'hint', title: 'Hint 1 of 3', meta: 'Costs 2 minutes' },
+      h('p', null, 'Compare the time on the receipt with the sailing on the ticket. One of them is wrong.'))));
+</script>
+</body>
+</html>

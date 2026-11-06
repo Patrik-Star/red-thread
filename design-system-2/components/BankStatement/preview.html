@@ -1,0 +1,20 @@
+<!-- @dsCard group="Evidence layer" height=480 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>BankStatement — preview</title>
+<style>.row{display:flex;flex-wrap:wrap;gap:var(--space-12);padding:var(--space-6) var(--space-8) var(--space-8);align-items:flex-start}</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
+    h(RT.Evidence, { number: 9, title: 'Page 2 of a statement', found: 'Victim’s coat pocket' },
+      h(RT.BankStatement, { bank: 'Waitematā Mutual', holder: 'Mr D Hale', account: '12-[redacted]-00', period: '01–14 Feb 2027', rows: [
+        { date: '09 Feb', details: 'Transfer to R. Kaur · ref LEDGER', out: '2,000.00', balance: '3,412.18' },
+        { date: '12 Feb', details: 'Cash withdrawal · Customs St', out: '500.00', balance: '2,912.18' },
+        { date: '14 Feb', details: 'Halfmoon Noodle Bar', out: '60.50', balance: '2,851.68', marked: true },
+        { date: '14 Feb', details: 'Transfer from R. Kaur', 'in': '2,000.00', balance: '4,851.68' }
+      ], footer: 'Continued over. Balances in NZ$.' }))));
+</script>
+</body>
+</html>
