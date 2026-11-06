@@ -1,0 +1,12 @@
+<!-- @dsCard group="Evidence" height=340 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>EvidenceCard — preview</title></head>
+<body>
+<div id="root" class="rt-row"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { style: { display: 'flex', gap: 32, flexWrap: 'wrap', paddingTop: 8 } }, h(RT.EvidenceCard, { number: 4, title: 'The torn ticket', status: 'new', location: 'Ferry Building, Quay St' }, 'Half a Devonport ferry ticket, stamped 23:12. Paid in cash. The other half is missing.'), h(RT.EvidenceCard, { number: 5, title: 'A locked laneway', status: 'locked', location: 'Vulcan Lane' }, 'The gate log says it opened at 00:14. Nobody admits to having a key.')));
+</script>
+</body>
+</html>

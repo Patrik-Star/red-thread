@@ -12,3 +12,5 @@ Append new decisions at the bottom. Format: date · decision · why · source.
 | 2026-10-28 | Culprit starts looking cleared; everyone else starts suspicious | Better arc; v1 cleared suspects too quickly | Case 001 v1 notes |
 | 2026-10-29 | Case 001 → v2 (001.2): 9 stops, 6 suspects, weapon thread, ~5 km, 150–180 min | v1 felt too short/easy; founder asked for >5 km and a 5th suspect | Case 001.2 |
 | 2026-11-06 | Project context moved from Notion into this repo; repo is source of truth | Keep context + skills together for Claude sessions | Repo setup |
+| 2026-11-06 | Adopt the Red Thread design system v1: one red thread (#E4142C) as the only accent; Night (dark) and Paper (near-white #FBFAF7) themes; Instrument Serif / Inter / IBM Plex Mono | Brief: dark, mysterious, modern, with a single red thread through the brand. Paper made whiter and the red brighter for outdoor phone readability | Design system |
+| 2026-11-06 | Design system says "evidence" (`EvidenceCard`, "Evidence 04"), never "clue" | Working rule 5: avoid "Clue"/"Cluedo" (Hasbro trademark) | Design system |

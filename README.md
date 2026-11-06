@@ -10,5 +10,6 @@ cases/        one folder per case (case.md + solution.md)
 playtests/    one file per playtest session
 decisions/    append-only decision log
 templates/    case and playtest templates
+design-system/ brand book, colour tokens and UI components
 .claude/      project skills for Claude
 ```

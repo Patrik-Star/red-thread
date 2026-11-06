@@ -1,0 +1,231 @@
+<!-- @dsCard group="Foundations" height=4800 subtitle="Every colour, where it goes, and what it may sit on" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colours — preview</title>
+<style>
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--font-sans); }
+  .wrap { padding:var(--space-8); max-width:960px; box-sizing:border-box; }
+  .lbl { font:500 11px/16px var(--font-mono); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-muted); }
+  h2 { font:400 36px/1.1 var(--font-serif); margin:var(--space-12) 0 var(--space-2); }
+  h2:first-child { margin-top:0; }
+  .lead { margin:0 0 var(--space-6); color:var(--ink-muted); font-size:15px; line-height:23px; max-width:640px; }
+  .rule { display:flex; align-items:center; gap:var(--space-3); margin:var(--space-12) 0 0; }
+  .rule::before, .rule::after { content:""; flex:1; height:var(--thread-width); background:var(--thread); }
+  .rule i { width:10px; height:10px; box-sizing:border-box; border-radius:var(--radius-pill); border:2px solid var(--thread); }
+
+  /* palette */
+  .group { margin-bottom:var(--space-6); }
+  .group > .lbl { margin-bottom:var(--space-3); display:block; }
+  .swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:var(--space-4); }
+  .sw { border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; background:var(--surface); }
+  .chip { height:72px; border-bottom:1px solid var(--line); }
+  .sw-body { padding:var(--space-3); }
+  .sw-name { font:500 13px/18px var(--font-mono); color:var(--ink); }
+  .sw-hex { font:400 12px/16px var(--font-mono); color:var(--ink-muted); text-transform:uppercase; }
+  .sw-use { font-size:13px; line-height:19px; color:var(--ink-muted); margin-top:var(--space-2); }
+
+  /* pairings */
+  .pairs { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:var(--space-4); }
+  .pair { border-radius:var(--radius-sm); padding:var(--space-4); border:1px solid var(--line); min-height:132px; display:flex; flex-direction:column; justify-content:space-between; gap:var(--space-3); }
+  .pair-sample { font-size:16px; line-height:24px; }
+  .pair-sample.big { font:400 30px/1.05 var(--font-serif); }
+  .pair-meta { display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-2); }
+  .pair-names { font:400 12px/16px var(--font-mono); opacity:.95; }
+  .badge { font:500 10px/14px var(--font-mono); letter-spacing:.12em; text-transform:uppercase; padding:3px 6px; border-radius:var(--radius-sm); background:var(--ground); color:var(--ink); border:1px solid var(--line-strong); white-space:nowrap; }
+  .ratio { font:500 20px/1 var(--font-mono); }
+  .gline { height:var(--thread-width); border-radius:1px; margin:var(--space-2) 0; }
+  .gbtn { display:inline-block; height:36px; line-height:34px; padding:0 var(--space-4); border:1px solid; border-radius:var(--radius-sm); font-size:14px; }
+
+  /* applied */
+  .applied { display:grid; grid-template-columns:360px 1fr; gap:var(--space-8); align-items:start; }
+  .phone { width:360px; border:1px solid var(--line-strong); border-radius:var(--radius-sm); background:var(--ground); padding:var(--space-6) var(--space-4); box-sizing:border-box; position:relative; }
+  .n { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; font:500 10px/1 var(--font-mono); background:var(--ink); color:var(--ground); border-radius:var(--radius-sm); flex:none; }
+  .callout { position:absolute; }
+  .legend { display:flex; flex-direction:column; gap:var(--space-3); }
+  .legend > div { display:flex; gap:var(--space-3); align-items:flex-start; font-size:14px; line-height:20px; }
+  .legend code { font:500 12px/20px var(--font-mono); color:var(--ink); }
+  .legend span.d { color:var(--ink-muted); }
+
+  /* don'ts */
+  .donts { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:var(--space-4); }
+  .dont { border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; background:var(--surface); }
+  .dont-art { height:120px; display:flex; align-items:center; justify-content:center; padding:var(--space-4); box-sizing:border-box; position:relative; }
+  .dont-art .x { position:absolute; top:8px; left:8px; font:500 10px/14px var(--font-mono); letter-spacing:.12em; text-transform:uppercase; padding:2px 6px; background:var(--ink); color:var(--ground); border-radius:var(--radius-sm); }
+  .dont-txt { padding:var(--space-3) var(--space-4) var(--space-4); font-size:13px; line-height:19px; color:var(--ink-muted); }
+  .dont-txt b { color:var(--ink); font-weight:600; display:block; margin-bottom:2px; }
+</style>
+</head>
+<body>
+<div class="wrap" id="root"></div>
+<script>
+(function () {
+  var root = document.getElementById('root');
+  var cs = getComputedStyle(document.documentElement);
+  function v(n) { return cs.getPropertyValue('--' + n).trim(); }
+  function lum(hex) {
+    var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(hex); if (!m) return null;
+    var c = [m[1], m[2], m[3]].map(function (x) { x = parseInt(x, 16) / 255; return x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4); });
+    return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+  }
+  function ratio(a, b) { var A = lum(v(a)), B = lum(v(b)); if (A == null || B == null) return null; return (Math.max(A, B) + .05) / (Math.min(A, B) + .05); }
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    for (var k in attrs || {}) { if (k === 'style') e.style.cssText = attrs[k]; else if (k === 'html') e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); }
+    (kids || []).forEach(function (c) { if (c != null) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function add(x) { root.appendChild(x); return x; }
+
+  /* 1. Palette */
+  add(el('h2', {}, ['The palette']));
+  add(el('p', { class: 'lead' }, ['Eighteen tokens in five roles. The values below are the current theme’s. Switch themes to see the other one.']));
+  var groups = [
+    ['Ground', [['ground', 'The page itself.'], ['surface', 'Panels, sheets, the case brief.'], ['surface-raised', 'Inputs, menus, one step up.']]],
+    ['Ink', [['ink', 'Headlines, body text, wordmark.'], ['ink-muted', 'Captions, secondary text, mono labels.']]],
+    ['Thread', [['thread', 'The thread line, primary button, pins. The one accent.'], ['thread-text', 'Red words: open tags, one emphasised word.'], ['thread-deep', 'Hover and pressed state of red fills.'], ['on-thread', 'Text on red fills only.'], ['focus', 'Keyboard focus ring.']]],
+    ['Evidence', [['manila', 'Evidence cards and folders. The same in both themes.'], ['manila-ink', 'All text on manila.'], ['manila-thread', 'Red stamps, numbers and pins on manila.'], ['manila-line', 'Dashed tear lines. Decorative.']]],
+    ['Supporting & lines', [['brass', 'Case numbers, pins on ground.'], ['solved', 'Solved tags, the confirmed answer only.'], ['line', 'Row hairlines. Decorative.'], ['line-strong', 'Ghost button and input borders.']]]
+  ];
+  groups.forEach(function (g) {
+    var grid = el('div', { class: 'swatches' });
+    g[1].forEach(function (t) {
+      grid.appendChild(el('div', { class: 'sw' }, [
+        el('div', { class: 'chip', style: 'background:var(--' + t[0] + ')' }),
+        el('div', { class: 'sw-body' }, [el('div', { class: 'sw-name' }, [t[0]]), el('div', { class: 'sw-hex' }, [v(t[0])]), el('div', { class: 'sw-use' }, [t[1]])])
+      ]));
+    });
+    add(el('div', { class: 'group' }, [el('span', { class: 'lbl' }, [g[0]]), grid]));
+  });
+
+  /* 2. Pairings */
+  add(el('div', { class: 'rule' }, [el('i')]));
+  add(el('h2', {}, ['Approved pairings']));
+  add(el('p', { class: 'lead' }, ['Each card is the real pair at the size it’s allowed, with its contrast calculated live. Text needs 4.5:1. Large text (24px+) and graphics need 3:1. Decorative pairs carry no meaning.']));
+  function badge(r, kind) {
+    if (kind === 'deco') return 'Decorative';
+    if (kind === 'graphic') return r >= 3 ? 'Graphic · text 24px+' : 'Decorative';
+    if (kind === 'ring') return r >= 3 ? 'Borders · rings' : 'Decorative';
+    if (r >= 4.5) return kind === 'button' ? 'Text · 15px+' : 'Text · any size';
+    if (r >= 3) return 'Large text only';
+    return 'Decorative';
+  }
+  var pairs = [
+    ['ink', 'ground', 'text', 'The guard swears the gate was locked at 11:40.'],
+    ['ink', 'surface', 'text', 'Case brief: the Ferry Building, 23:40.'],
+    ['ink', 'surface-raised', 'text', 'Your answer: the night porter'],
+    ['ink-muted', 'ground', 'text', 'Allow 90 minutes. 3–6 players.'],
+    ['ink-muted', 'surface', 'text', 'Last updated by your team at 21:14.'],
+    ['ink-muted', 'surface-raised', 'text', 'Type a name…'],
+    ['thread-text', 'ground', 'label', 'Case 07 · Open'],
+    ['thread-text', 'surface', 'label', 'Case 07 · Open'],
+    ['brass', 'ground', 'label', 'Case 07 · -36.8442, 174.7676'],
+    ['solved', 'ground', 'label', 'Case 03 · Solved'],
+    ['solved', 'surface', 'label', 'Answer confirmed'],
+    ['on-thread', 'thread', 'button', 'Open the case file'],
+    ['on-thread', 'thread-deep', 'button', 'Open the case file (pressed)'],
+    ['thread', 'ground', 'graphic', null],
+    ['thread', 'surface', 'graphic', null],
+    ['line-strong', 'ground', 'border', null],
+    ['line-strong', 'surface', 'border', null],
+    ['focus', 'ground', 'focus', null],
+    ['manila-ink', 'manila', 'text', 'Half a Devonport ferry ticket, stamped 23:12.'],
+    ['manila-thread', 'manila', 'label', 'Evidence 04 · New'],
+    ['line', 'ground', 'deco', null],
+    ['manila-line', 'manila', 'deco', null]
+  ];
+  var pg = el('div', { class: 'pairs' });
+  pairs.forEach(function (p) {
+    var fg = p[0], bg = p[1], kind = p[2], r = ratio(fg, bg);
+    var sample;
+    if (kind === 'label') sample = el('div', { class: 'lbl', style: 'color:var(--' + fg + ');font-size:12px' }, [p[3]]);
+    else if (kind === 'button') sample = el('div', { style: 'color:var(--' + fg + ');font:500 15px/1 var(--font-sans)' }, [p[3]]);
+    else if (kind === 'graphic') sample = el('div', {}, [el('div', { class: 'gline', style: 'background:var(--' + fg + ');height:var(--thread-width-hero)' }), el('div', { class: 'pair-sample big', style: 'color:var(--' + fg + ')' }, ['Who did it?'])]);
+    else if (kind === 'border') sample = el('span', { class: 'gbtn', style: 'border-color:var(--' + fg + ');color:var(--ink)' }, ['Ask for a hint']);
+    else if (kind === 'focus') sample = el('span', { class: 'gbtn', style: 'border-color:var(--line-strong);color:var(--ink);outline:2px solid var(--focus);outline-offset:2px' }, ['Focused button']);
+    else if (kind === 'deco') sample = el('div', { style: 'border-top:1px ' + (fg === 'manila-line' ? 'dashed' : 'solid') + ' var(--' + fg + ');margin:var(--space-4) 0' });
+    else sample = el('div', { class: 'pair-sample', style: 'color:var(--' + fg + ')' }, [p[3]]);
+    var metaColor = (bg === 'thread' || bg === 'thread-deep') ? 'var(--on-thread)' : (bg === 'manila' ? 'var(--manila-ink)' : 'var(--ink)');
+    pg.appendChild(el('div', { class: 'pair', style: 'background:var(--' + bg + ');border-color:' + (bg === 'manila' || bg === 'thread' || bg === 'thread-deep' ? 'transparent' : 'var(--line)') }, [
+      sample,
+      el('div', { class: 'pair-meta', style: 'color:' + metaColor }, [
+        el('div', {}, [el('div', { class: 'ratio' }, [r ? r.toFixed(1) + ':1' : '—']), el('div', { class: 'pair-names' }, [fg + ' on ' + bg])]),
+        el('span', { class: 'badge' }, [badge(r, kind === 'border' || kind === 'focus' ? 'ring' : kind)])
+      ])
+    ]));
+  });
+  add(pg);
+
+  /* 3. Applied */
+  add(el('div', { class: 'rule' }, [el('i')]));
+  add(el('h2', {}, ['On a game screen']));
+  add(el('p', { class: 'lead' }, ['One screen, every role in place. Read the key top to bottom. Notice how little red there is: the thread, one tag and one button.']));
+  var phone = el('div', { class: 'phone' }, [
+    el('div', { style: 'display:flex;justify-content:space-between;align-items:center' }, [
+      el('span', { class: 'lbl', style: 'color:var(--brass)' }, ['Case 07']),
+      el('span', { class: 'rt-tag rt-tag-open' }, ['Open'])
+    ]),
+    el('div', { style: 'font:400 40px/1 var(--font-serif);margin:var(--space-4) 0 var(--space-2);color:var(--ink)' }, ['The Ferry Building Affair']),
+    el('p', { style: 'margin:0;font-size:15px;line-height:23px;color:var(--ink-muted)' }, ['A body was found at 23:40. You have ninety minutes.']),
+    el('div', { style: 'margin:var(--space-6) 0;display:flex;align-items:center;gap:var(--space-3)' }, [
+      el('div', { style: 'flex:1;height:var(--thread-width);background:var(--thread)' }),
+      el('span', { class: 'lbl' }, ['Chapter I']),
+      el('div', { style: 'flex:1;height:var(--thread-width);background:var(--thread)' })
+    ]),
+    el('div', { style: 'display:flex;justify-content:center;padding-top:6px' }, [
+      el('article', { class: 'rt-evidence', style: 'width:100%' }, [
+        el('span', { class: 'rt-evidence-pin' }),
+        el('div', { class: 'rt-evidence-meta' }, [el('span', {}, ['Evidence 04']), el('span', {}, ['New'])]),
+        el('h3', { class: 'rt-evidence-title', style: 'font-size:26px' }, ['The torn ticket']),
+        el('p', { class: 'rt-evidence-body' }, ['Half a Devonport ferry ticket, stamped 23:12. Paid in cash.']),
+        el('div', { class: 'rt-evidence-loc' }, [el('span', {}, ['→']), el('span', {}, ['Ferry Building, Quay St'])])
+      ])
+    ]),
+    el('div', { style: 'margin-top:var(--space-6);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:var(--space-3) var(--space-4)' }, [
+      el('div', { class: 'lbl', style: 'margin-bottom:4px' }, ['Your accusation']),
+      el('div', { style: 'background:var(--surface-raised);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:10px 12px;font-size:15px;color:var(--ink)' }, ['The night porter'])
+    ]),
+    el('div', { style: 'display:flex;gap:var(--space-3);margin-top:var(--space-4)' }, [
+      el('button', { class: 'rt-btn rt-btn-primary', style: 'flex:1;justify-content:center' }, ['Submit']),
+      el('button', { class: 'rt-btn', style: 'justify-content:center' }, ['Ask for a hint'])
+    ]),
+    el('div', { style: 'margin-top:var(--space-4)' }, [el('span', { class: 'rt-tag rt-tag-solved' }, ['Case 03 · Solved'])])
+  ]);
+  var legend = el('div', { class: 'legend' });
+  [
+    ['ground', 'The screen. 85% of what the team sees.'],
+    ['brass', 'Case number in mono.'],
+    ['thread-text', 'The open tag: red as words.'],
+    ['ink', 'The case title in serif, plus all text that must be read.'],
+    ['ink-muted', 'The brief, a step back from the title.'],
+    ['thread', 'The thread divider: the only red line on screen.'],
+    ['manila · manila-ink · manila-thread', 'The evidence card: evidence paper, with its own ink, red stamps and pin.'],
+    ['surface · surface-raised · line-strong', 'Panel, input and its border.'],
+    ['thread · on-thread', 'The primary button, once per screen.'],
+    ['line-strong · ink', 'The ghost button for everything else.'],
+    ['solved', 'Shown only once an answer is confirmed.']
+  ].forEach(function (l, i) {
+    legend.appendChild(el('div', {}, [el('span', { class: 'n' }, [String(i + 1)]), el('div', {}, [el('code', {}, [l[0]]), el('br'), el('span', { class: 'd' }, [l[1]])])]));
+  });
+  add(el('div', { class: 'applied' }, [phone, legend]));
+
+  /* 4. Don'ts */
+  add(el('div', { class: 'rule' }, [el('i')]));
+  add(el('h2', {}, ['Don’t']));
+  add(el('p', { class: 'lead' }, ['The common ways the palette goes wrong, each with the fix.']));
+  function dont(art, title, txt, bg) {
+    return el('div', { class: 'dont' }, [el('div', { class: 'dont-art', style: 'background:' + (bg || 'var(--ground)') }, [el('span', { class: 'x' }, ['Don’t'])].concat(art)), el('div', { class: 'dont-txt' }, [el('b', {}, [title]), txt])]);
+  }
+  var dg = el('div', { class: 'donts' });
+  dg.appendChild(dont([el('span', { style: 'color:var(--thread);font-size:13px' }, ['The gate was locked at 11:40.'])], 'Small text in thread', 'thread is ' + ratio('thread', 'ground').toFixed(1) + ':1 here. Small red text uses thread-text.'));
+  dg.appendChild(dont([el('div', { style: 'width:100%;height:56px;background:var(--thread);display:flex;align-items:center' }, [el('div', { style: 'flex:1;height:var(--thread-width-hero);background:var(--thread-deep)' })])], 'Thread on red', 'The thread disappears on a red fill. Keep red areas small, and keep the thread on ground, surface or manila (as manila-thread).'));
+  dg.appendChild(dont([el('button', { class: 'rt-btn', style: 'background:var(--brass);border-color:var(--brass);color:var(--ground);white-space:nowrap' }, ['Open file']), el('span', { style: 'width:12px' }), el('button', { class: 'rt-btn rt-btn-primary' }, ['Submit'])], 'A second accent', 'Brass is hardware (numbers, pins), never a button. There’s one accent, and it’s red.'));
+  dg.appendChild(dont([el('div', { style: 'background:#ffffff;color:#000000;padding:12px 16px;font-size:14px;border:1px solid var(--line)' }, ['Pure white, pure black'])], 'Pure #FFF or #000', 'Pure white glares outdoors and pure black looks flat. Use ground and ink, which sit just inside both.'));
+  dg.appendChild(dont([el('div', { style: 'display:flex;flex-direction:column;gap:6px;align-items:flex-start' }, [el('div', { style: 'background:var(--surface-raised);border:1px solid var(--thread);padding:8px 12px;font-size:14px;color:var(--ink);border-radius:2px' }, ['The gardener']), el('span', { style: 'color:var(--thread-text);font-size:13px' }, ['Wrong!'])])], 'Red for errors', 'Red belongs to the thread. A wrong answer is written in words, in ink-muted: “That doesn’t hold. Look at the timestamp again.”'));
+  dg.appendChild(dont([el('div', { style: 'position:relative;width:180px;height:80px;background:var(--manila);border-radius:2px' }, [el('span', { style: 'position:absolute;top:-6px;left:84px;width:12px;height:12px;border-radius:999px;background:var(--thread)' }), el('span', { style: 'position:absolute;bottom:10px;left:12px;font:500 11px/16px var(--font-mono);letter-spacing:.14em;color:var(--brass)' }, ['EVIDENCE 04'])])], 'Thread or brass on manila', 'thread on manila is ' + ratio('thread', 'manila').toFixed(1) + ':1 and brass is ' + ratio('brass', 'manila').toFixed(1) + ':1. Use manila-thread for pins and stamps, and manila-ink for text.'));
+  add(dg);
+})();
+</script>
+</body>
+</html>
