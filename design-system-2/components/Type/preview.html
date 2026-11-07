@@ -1,0 +1,98 @@
+<!-- @dsCard group="Foundations" height=1400 subtitle="Three voices for the game and three for the evidence. Every sample uses the real type style from tokens.json, and its size is read live from the page." -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Type</title>
+<style>
+  .wrap { padding:var(--space-8); max-width:880px; }
+  .voice { display:grid; grid-template-columns:minmax(0, 220px) minmax(0, 1fr); gap:var(--space-6); padding:var(--space-8) 0; border-top:1px solid var(--line); }
+  .voice:first-child { border-top:0; padding-top:0; }
+  .who h2 { margin:0; font:600 20px/28px var(--font-sans); }
+  .who p { margin:var(--space-2) 0 0; color:var(--ink-muted); font-size:15px; line-height:23px; }
+  .row { display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:baseline; gap:var(--space-4); padding:var(--space-3) 0; }
+  .row + .row { border-top:1px dashed var(--line); }
+  .row > :first-child { margin:0; min-width:0; overflow-wrap:break-word; }
+  .spec { font:500 12px/16px var(--font-mono); letter-spacing:.06em; color:var(--ink-muted); white-space:nowrap; text-align:right; }
+  .spec b { display:block; color:var(--brass); font-weight:500; letter-spacing:.12em; text-transform:uppercase; }
+  .label.sample { text-transform:uppercase; color:var(--brass); }
+  .evidence.sample { color:var(--ink); }
+  .row > .paper { justify-self:start; max-width:100%; }
+  .paper { background:var(--evidence); color:var(--evidence-ink); padding:var(--space-4); box-shadow:var(--shadow-object); }
+  .hand.sample { color:var(--evidence-pen); }
+  .mixup { margin-top:var(--space-4); display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-6); align-items:baseline; }
+  .mixup span { font-family:var(--font-sans); font-size:40px; line-height:48px; letter-spacing:.06em; }
+  .mixup small { flex-basis:100%; color:var(--ink-muted); font-size:14px; line-height:22px; }
+  @media (max-width: 640px) {
+    .wrap { padding:var(--space-4); }
+    .voice { grid-template-columns:1fr; gap:var(--space-3); padding:var(--space-6) 0; }
+    .row { grid-template-columns:1fr; gap:var(--space-1); }
+    .spec { text-align:left; }
+    .spec b { display:inline; margin-right:var(--space-2); }
+    .display-xl.sample { font-size:56px; }
+    .display-l.sample { font-size:44px; }
+  }
+</style></head>
+<body>
+<div class="wrap">
+
+  <section class="voice">
+    <div class="who"><h2>Newsreader</h2><p>The narrator. Case names and evidence titles, set like tomorrow’s crime page. Optical sizes keep it sharp from a 24px tag to a poster. Italic for one phrase only.</p></div>
+    <div>
+      <div class="row"><p class="display-xl sample">The Dusk Painting</p><div class="spec" data-of="display-xl"></div></div>
+      <div class="row"><p class="display-l sample">Case 001</p><div class="spec" data-of="display-l"></div></div>
+      <div class="row"><p class="heading sample">Evidence 06: Tessa’s lab note</p><div class="spec" data-of="heading"></div></div>
+      <div class="row"><p class="heading sample">It can’t be 1893, <span class="heading-italic">someone was lying.</span></p><div class="spec" data-of="heading-italic"></div></div>
+    </div>
+  </section>
+
+  <section class="voice">
+    <div class="who"><h2>Atkinson Hyperlegible Next</h2><p>The case officer. Instructions, briefs and everything read on the street. Drawn for low-vision readers, so no two characters are easily confused.</p></div>
+    <div>
+      <div class="row"><p class="title sample">Walk up Queen Street to the Town Hall</p><div class="spec" data-of="title"></div></div>
+      <div class="row"><p class="body sample">Count the columns on the Queen Street front. That number opens the auction livestream. Stay on the footpath and cross at the lights.</p><div class="spec" data-of="body"></div></div>
+      <div class="row"><p class="small sample">Allow 150–180 minutes. 3–6 players. Daylight only.</p><div class="spec" data-of="small"></div></div>
+      <div class="mixup" aria-label="Characters that look alike in many fonts">
+        <span>Il1</span><span>0O</span><span>5S</span><span>8B</span><span>rn m</span>
+        <small>Codes are copied off stone and brass in sun and drizzle. In Atkinson, 0 is never O, and I, l and 1 never look alike.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="voice">
+    <div class="who"><h2>IBM Plex Mono</h2><p>The file. Uppercase labels at 12px, and records: times, coordinates, transcripts. Use labels sparingly; they’re the quickest way to look templated.</p></div>
+    <div>
+      <div class="row"><p class="label sample">Case 001 · Stop 4 of 8</p><div class="spec" data-of="label"></div></div>
+      <div class="row"><p class="evidence sample">23:42 · 2 min · -36.8506, 174.7680</p><div class="spec" data-of="evidence"></div></div>
+    </div>
+  </section>
+
+  <section class="voice">
+    <div class="who"><h2>Evidence brings its own type</h2><p>Written by people and machines in the story, never by the game. These faces never set the game’s own words.</p></div>
+    <div>
+      <div class="row"><div class="paper"><p class="receipt sample" style="margin:0;text-transform:uppercase">1 x Lamb rump&nbsp;&nbsp;&nbsp;&nbsp;$44.00<br>Total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$164.00</p></div><div class="spec" data-of="receipt"><b>Share Tech Mono</b></div></div>
+      <div class="row"><div class="paper"><p class="doc-body sample" style="margin:0">20 Jan · TRANSFER FROM M REID · 3,000.00</p></div><div class="spec" data-of="doc-body"><b>Arimo</b></div></div>
+      <div class="row"><div class="paper"><p class="hand sample" style="margin:0">Titanium white present. Can’t be 1893.</p></div><div class="spec" data-of="hand"><b>Caveat</b></div></div>
+    </div>
+  </section>
+
+</div>
+<script>
+  // Read each style's real size and leading from the page, so the labels can't drift from tokens.json.
+  function spec() {
+    document.querySelectorAll('.spec[data-of]').forEach(function (el) {
+      var name = el.getAttribute('data-of');
+      var probe = document.createElement('span'); probe.className = name; probe.style.position = 'absolute'; probe.style.visibility = 'hidden'; probe.textContent = 'x';
+      document.body.appendChild(probe);
+      var cs = getComputedStyle(probe);
+      var lh = cs.lineHeight === 'normal' ? 'normal' : Math.round(parseFloat(cs.lineHeight)) + 'px';
+      var b = el.querySelector('b');
+      el.textContent = '';
+      el.appendChild(b || Object.assign(document.createElement('b'), { textContent: name }));
+      el.appendChild(document.createTextNode(Math.round(parseFloat(cs.fontSize)) + '/' + lh + ' · ' + cs.fontWeight));
+      probe.remove();
+    });
+  }
+  spec();
+  if (document.fonts) document.fonts.ready.then(spec);
+</script>
+</body>
+</html>

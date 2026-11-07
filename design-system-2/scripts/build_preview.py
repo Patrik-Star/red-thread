@@ -254,9 +254,9 @@ bundle_js = (DS / "components" / "bundle.js").read_text(encoding="utf-8")
 react = (DS / "vendor" / "react.production.min.js").read_text(encoding="utf-8")
 react_dom = (DS / "vendor" / "react-dom.production.min.js").read_text(encoding="utf-8")
 
-# Card order: cover, the Colours reference, then the bundle's component order.
+# Card order: cover, the Colours and Type references, then the bundle's component order.
 header = json.loads(re.search(r"@ds-bundle: (\{.*?\}) \*/", bundle_js).group(1))
-order = ["Cover", "Colours"] + [c["name"] for c in header["components"]]
+order = ["Cover", "Colours", "Type"] + [c["name"] for c in header["components"]]
 # Then any other card folder (worked examples such as Case001), alphabetically.
 order += sorted(d.name for d in (DS / "components").iterdir() if d.is_dir() and d.name not in order)
 cards = []
