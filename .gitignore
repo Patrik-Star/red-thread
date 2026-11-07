@@ -4,3 +4,5 @@
 node_modules/
 __pycache__/
 .agents/
+# Impeccable live-server runtime state
+.impeccable/live/

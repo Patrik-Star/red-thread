@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":4,"namespace":"RedThread","components":[{"name":"Wordmark"},{"name":"Button"},{"name":"CaseTag"},{"name":"ThreadDivider"},{"name":"GameNote"},{"name":"Evidence"},{"name":"Receipt"},{"name":"PhoneScreenshot"},{"name":"PhoneRecords"},{"name":"BankStatement"},{"name":"Ticket"},{"name":"HandwrittenNote"},{"name":"CctvStill"}]} */
+/* @ds-bundle: {"format":4,"namespace":"RedThread","components":[{"name":"Wordmark"},{"name":"Button"},{"name":"CaseTag"},{"name":"ThreadDivider"},{"name":"GameNote"},{"name":"Evidence"},{"name":"Receipt"},{"name":"PhoneScreenshot"},{"name":"PhoneRecords"},{"name":"BankStatement"},{"name":"Ticket"},{"name":"HandwrittenNote"},{"name":"CctvStill"},{"name":"Printout"}]} */
 (function () {
   var R = window.React, h = R.createElement;
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
@@ -45,22 +45,46 @@
   function CodeCells(p) {
     var n = p.length || 4;
     var refs = R.useRef([]);
-    var st = R.useState(Array(n).fill('')), vals = st[0], setVals = st[1];
-    function change(i, e) {
-      var c = e.target.value.slice(-1).toUpperCase();
-      var next = vals.slice(); next[i] = c; setVals(next);
-      if (c && i < n - 1) refs.current[i + 1].focus();
+    var st = R.useState(function () { return Array(n).fill(''); }), vals = st[0], setVals = st[1];
+    if (vals.length !== n) { vals = Array(n).fill(''); }
+    var done = p.state === 'right';
+    function commit(next) {
+      setVals(next);
       if (next.every(Boolean) && p.onComplete) p.onComplete(next.join(''));
     }
-    function key(i, e) { if (e.key === 'Backspace' && !vals[i] && i > 0) refs.current[i - 1].focus(); }
+    function clean(v) { return (v || '').replace(p.numeric ? /[^0-9]/g : /[^0-9A-Za-z\u00C0-\u017F]/g, '').toUpperCase(); }
+    function fill(i, chars) {
+      var next = vals.slice(), j = i;
+      for (var k = 0; k < chars.length && j < n; k++, j++) next[j] = chars[k];
+      commit(next);
+      var to = Math.min(j, n - 1);
+      if (refs.current[to]) refs.current[to].focus();
+    }
+    function change(i, e) {
+      var c = clean(e.target.value);
+      if (c.length > 1) return fill(i, c.slice(vals[i] && c[0] === vals[i] ? 1 : 0));
+      var next = vals.slice(); next[i] = c; commit(next);
+      if (c && i < n - 1) refs.current[i + 1].focus();
+    }
+    function paste(i, e) {
+      var c = clean(e.clipboardData && e.clipboardData.getData('text'));
+      if (!c) return;
+      e.preventDefault(); fill(i, c);
+    }
+    function key(i, e) {
+      if (e.key === 'Backspace' && !vals[i] && i > 0) refs.current[i - 1].focus();
+      else if (e.key === 'ArrowLeft' && i > 0) refs.current[i - 1].focus();
+      else if (e.key === 'ArrowRight' && i < n - 1) refs.current[i + 1].focus();
+    }
     var id = R.useId ? R.useId() : 'code';
-    return h('div', { className: 'rt-note-code' },
-      h('label', { className: 'rt-note-code-label', htmlFor: id + '0' }, p.label || 'Unlock code'),
-      h('div', { className: 'rt-note-code-cells', role: 'group', 'aria-label': p.label || 'Unlock code' },
+    var label = p.label || 'Unlock code';
+    return h('div', { className: 'rt-note-code', 'data-state': p.state || undefined },
+      h('label', { className: 'rt-note-code-label', htmlFor: id + '0' }, label),
+      h('div', { className: 'rt-note-code-cells', role: 'group', 'aria-label': label + ', ' + n + (p.numeric ? ' digits' : ' characters') },
         vals.map(function (v, i) {
-          return h('input', { key: i, id: id + i, ref: function (el) { refs.current[i] = el; }, value: v, inputMode: p.numeric ? 'numeric' : 'text', autoComplete: 'off', maxLength: 2, disabled: p.disabled, 'aria-label': 'Character ' + (i + 1) + ' of ' + n, onChange: function (e) { change(i, e); }, onKeyDown: function (e) { key(i, e); } });
+          return h('input', { key: i, id: id + i, ref: function (el) { refs.current[i] = el; }, value: v, inputMode: p.numeric ? 'numeric' : 'text', autoComplete: 'one-time-code', autoCapitalize: 'characters', spellCheck: false, maxLength: n, disabled: p.disabled || done, 'aria-invalid': p.state === 'wrong' || undefined, 'aria-label': 'Character ' + (i + 1) + ' of ' + n, onChange: function (e) { change(i, e); }, onPaste: function (e) { paste(i, e); }, onKeyDown: function (e) { key(i, e); }, onFocus: function (e) { e.target.select(); } });
         })),
-      p.message ? h('p', { className: 'rt-note-code-msg', 'data-state': p.state || undefined, role: p.state === 'wrong' ? 'alert' : undefined }, p.message) : null);
+      p.message ? h('p', { className: 'rt-note-code-msg', 'data-state': p.state || undefined, role: p.state ? 'status' : undefined, 'aria-live': p.state ? 'polite' : undefined }, p.message) : null);
   }
 
   function GameNote(p) {
@@ -68,15 +92,15 @@
     return h('section', { className: cx('rt-note', 'rt-note-' + kind, p.className), 'aria-label': p.ariaLabel },
       p.title ? h('h3', { className: 'rt-note-title' }, p.title) : null,
       p.children ? h('div', { className: 'rt-note-body' }, p.children) : null,
-      kind === 'unlock' ? h(CodeCells, { length: p.codeLength, numeric: p.numeric, label: p.codeLabel, message: p.codeMessage, state: p.codeState, onComplete: p.onCode, disabled: p.disabled }) : null,
+      kind === 'unlock' ? h(CodeCells, { key: 'len' + (p.codeLength || 4), length: p.codeLength, numeric: p.numeric, label: p.codeLabel, message: p.codeMessage, state: p.codeState, onComplete: p.onCode, disabled: p.disabled }) : null,
       (p.meta || p.metaEnd) ? h('div', { className: 'rt-note-meta' }, h('span', null, p.meta), p.metaEnd ? h('span', null, p.metaEnd) : null) : null);
   }
 
   function EvidenceTag(p) {
     var status = p.status || 'new';
-    return h('div', { className: 'rt-tagm' },
+    return h('div', { className: cx('rt-tagm', 'rt-tagm-' + status) },
       h('span', { className: 'rt-tagm-hole', 'aria-hidden': true }),
-      h('div', { className: 'rt-tagm-meta' }, h('span', null, 'Evidence ' + pad(p.number)), h('span', null, { 'new': 'New', found: 'Filed', locked: 'Locked' }[status])),
+      h('div', { className: 'rt-tagm-meta' }, h('span', null, p.number != null ? 'Evidence ' + pad(p.number) : 'Evidence'), h('span', { className: 'rt-tagm-status' }, { 'new': 'New', found: 'Filed', locked: 'Locked' }[status])),
       p.title ? h('h3', { className: 'rt-tagm-title' }, p.title) : null,
       p.found ? h('div', { className: 'rt-tagm-found' }, h('span', null, 'Found '), p.found) : null);
   }
@@ -98,6 +122,7 @@
     var lines = p.lines || [];
     return h('div', { className: 'rt-paper rt-receipt' },
       h('div', { className: 'rt-receipt-head' },
+        p.heading ? h('div', { className: 'rt-receipt-heading' }, p.heading) : null,
         h('div', { className: 'rt-receipt-merchant' }, p.merchant),
         p.address ? h('div', null, p.address) : null,
         p.gstNumber ? h('div', { className: 'rt-receipt-muted' }, 'GST No. ' + p.gstNumber) : null),
@@ -108,10 +133,12 @@
         return h('div', { key: i, className: 'rt-receipt-row' }, h('span', null, txt((l.qty ? l.qty + ' x ' : '') + l.item)), h('span', null, l.price));
       }),
       h('hr', { className: 'rt-receipt-rule' }),
-      h('div', { className: 'rt-receipt-row rt-receipt-total' }, h('span', null, 'Total'), h('span', null, p.total)),
+      p.subtotal ? h('div', { className: 'rt-receipt-row' }, h('span', null, 'Subtotal'), h('span', null, p.subtotal)) : null,
+      p.total ? h('div', { className: 'rt-receipt-row rt-receipt-total' }, h('span', null, 'Total'), h('span', null, p.total)) : null,
       p.gst ? h('div', { className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, 'Incl. GST 15%'), h('span', null, p.gst)) : null,
       p.paid ? h('div', { className: 'rt-receipt-row' }, h('span', null, p.paid), h('span', null, p.tendered || p.total)) : null,
       p.card ? h('div', { className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, txt(p.card)), h('span', null, '')) : null,
+      (p.extra || []).map(function (l, i) { return h('div', { key: 'x' + i, className: 'rt-receipt-row rt-receipt-muted' }, h('span', null, txt(l[0])), h('span', null, txt(l[1] || ''))); }),
       p.footer ? h('div', { className: 'rt-receipt-foot' }, p.footer) : null,
       p.stamp ? h('div', { className: 'rt-receipt-stamp' }, h('span', { className: 'rt-stamp' }, p.stamp)) : null);
   }
@@ -124,23 +151,24 @@
     else if (p.app === 'calls') {
       screen = [
         h('div', { key: 't', className: 'rt-phone-title' }, 'Recents'),
-        (p.calls || []).map(function (c, i) {
+        h('div', { key: 'c', className: 'rt-phone-calls' }, (p.calls || []).map(function (c, i) {
           return h('div', { key: i, className: cx('rt-phone-call', c.missed && 'rt-phone-call-missed') },
-            h('div', null, h('b', null, txt(c.name)), h('small', null, c.missed ? 'Missed · ' + (c.kind || 'mobile') : (c.kind || 'mobile'))),
+            h('div', null, h('b', null, txt(c.name)), h('small', null, (c.missed ? 'Missed · ' : '') + (c.kind || 'mobile') + (c.duration ? ' · ' + c.duration : ''))),
             h('time', null, c.time));
-        })];
+        }))];
     } else {
-      var initials = (p.contact || '?').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 2);
+      var initials = (p.contact || '').split(/\s+/).filter(function (w) { return /^[A-Za-z\u00C0-\u017F]/.test(w); }).map(function (w) { return w[0].toUpperCase(); }).join('').slice(0, 2);
+      var who = p.contact || 'Them';
       screen = [
-        h('div', { key: 'h', className: 'rt-phone-head' }, h('span', { className: 'rt-phone-avatar', 'aria-hidden': true }, initials), h('span', { className: 'rt-phone-name' }, p.contact)),
+        h('div', { key: 'h', className: 'rt-phone-head' }, h('span', { className: 'rt-phone-avatar', 'aria-hidden': true }, initials || h('svg', { viewBox: '0 0 24 24', width: 22, height: 22, fill: 'currentColor' }, h('circle', { cx: 12, cy: 9, r: 4 }), h('path', { d: 'M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6z' }))), h('span', { className: 'rt-phone-name' }, p.contact)),
         h('div', { key: 'm', className: 'rt-phone-thread' },
           (p.messages || []).map(function (m, i) {
             if (m.day) return h('div', { key: i, className: 'rt-phone-day' }, m.day);
             if (m.receipt) return h('div', { key: i, className: 'rt-phone-receipt' }, m.receipt);
-            return h('div', { key: i, className: cx('rt-bubble', 'rt-bubble-' + (m.from === 'me' ? 'me' : 'them')) }, txt(m.text));
+            return h('div', { key: i, className: cx('rt-bubble', 'rt-bubble-' + (m.from === 'me' ? 'me' : 'them')) }, h('span', { className: 'rt-sr' }, (m.from === 'me' ? 'Me' : who) + ': '), txt(m.text));
           }))];
     }
-    return h('div', { className: 'rt-phone', role: 'img', 'aria-label': p.label || ('Screenshot of a phone' + (p.contact ? ': messages with ' + p.contact : '')) },
+    return h('div', { className: 'rt-phone', role: 'group', 'aria-label': p.label || ('Screenshot of a phone' + (p.app === 'calls' ? ': recent calls' : p.contact ? ': messages with ' + p.contact : '')) },
       h('div', { className: 'rt-phone-screen' },
         h('span', { className: 'rt-phone-island', 'aria-hidden': true }),
         h('div', { className: 'rt-phone-status', 'aria-hidden': true }, h('span', null, p.time || '23:41'),
@@ -160,22 +188,22 @@
     return h('div', { className: 'rt-paper rt-doc' },
       DocHead({ org: p.carrier, title: 'Itemised call record', info: [['Account holder', p.holder], ['Number', p.number], ['Period', p.period]].filter(function (r) { return r[1]; }) }),
       h('table', null,
-        h('thead', null, h('tr', null, ['Date', 'Time', 'Type', 'Number', 'Duration'].map(function (c, i) { return h('th', { key: c, className: i === 4 ? 'rt-num' : undefined }, c); }))),
+        h('thead', null, h('tr', null, ['Date', 'Time', 'Type', 'Number', 'Duration'].map(function (c, i) { return h('th', { key: c, className: cx(i === 4 && 'rt-num', i === 0 && 'rt-col-fold') || undefined, 'aria-label': i === 4 ? c : undefined }, i === 4 ? [h('span', { key: 'f', className: 'rt-th-full' }, c), h('span', { key: 's', className: 'rt-th-short', 'aria-hidden': true }, 'Dur.')] : c); }))),
         h('tbody', null, (p.rows || []).map(function (r, i) {
           return h('tr', { key: i, className: r.marked ? 'rt-marked' : undefined },
-            h('td', null, r.date), h('td', null, r.time), h('td', null, h('span', { className: 'rt-dir' }, dirs[r.dir] || r.dir)), h('td', null, txt(r.to)), h('td', { className: 'rt-num' }, r.duration || '—'));
+            h('td', { className: 'rt-nowrap rt-col-fold' }, r.date), h('td', { className: 'rt-nowrap' }, h('span', { className: 'rt-fold', 'aria-hidden': true }, r.date), r.time), h('td', null, h('span', { className: 'rt-dir' }, dirs[r.dir] || r.dir)), h('td', { className: 'rt-nowrap' }, txt(r.to)), h('td', { className: 'rt-num' }, r.duration || '—'));
         }))),
       p.footer ? h('div', { className: 'rt-doc-foot' }, p.footer) : null);
   }
 
   function BankStatement(p) {
-    return h('div', { className: 'rt-paper rt-doc' },
+    return h('div', { className: 'rt-paper rt-doc rt-doc-bank' },
       DocHead({ org: p.bank, title: 'Statement', info: [['Account', p.account], ['Name', p.holder], ['Period', p.period]].filter(function (r) { return r[1]; }) }),
       h('table', null,
-        h('thead', null, h('tr', null, ['Date', 'Details', 'Out', 'In', 'Balance'].map(function (c, i) { return h('th', { key: c, className: i > 1 ? 'rt-num' : undefined }, c); }))),
+        h('thead', null, h('tr', null, ['Date', 'Details', 'Debit', 'Credit', 'Balance'].map(function (c, i) { return h('th', { key: c, className: cx(i > 1 && 'rt-num', i === 0 && 'rt-col-fold') || undefined }, c); }))),
         h('tbody', null, (p.rows || []).map(function (r, i) {
           return h('tr', { key: i, className: r.marked ? 'rt-marked' : undefined },
-            h('td', null, r.date), h('td', { className: 'rt-wrap' }, txt(r.details)), h('td', { className: 'rt-num' }, r.out || ''), h('td', { className: 'rt-num' }, r['in'] || ''), h('td', { className: 'rt-num' }, r.balance || ''));
+            h('td', { className: 'rt-nowrap rt-col-fold' }, r.date), h('td', { className: 'rt-wrap' }, h('span', { className: 'rt-fold', 'aria-hidden': true }, r.date), txt(r.details)), h('td', { className: 'rt-num' }, r.out || ''), h('td', { className: 'rt-num' }, r['in'] || ''), h('td', { className: 'rt-num' }, r.balance || ''));
         }))),
       p.footer ? h('div', { className: 'rt-doc-foot' }, p.footer) : null);
   }
@@ -186,10 +214,10 @@
         h('div', { className: 'rt-ticket-op' }, p.operator),
         h('div', { className: 'rt-ticket-route' }, h('span', null, p.from), h('i', { 'aria-label': 'to' }, 'to'), h('span', null, p.to)),
         h('dl', { className: 'rt-ticket-grid' },
-          h('dt', null, 'Date'), h('dt', null, 'Sailing'), h('dt', null, 'Fare'),
+          h('dt', null, (p.labels && p.labels.date) || 'Date'), h('dt', null, (p.labels && p.labels.time) || 'Sailing'), h('dt', null, (p.labels && p.labels.fare) || 'Fare'),
           h('dd', null, p.date), h('dd', null, p.time), h('dd', null, p.fare))),
       h('div', { className: 'rt-ticket-stub', 'aria-hidden': p.torn ? true : undefined },
-        h('span', null, 'Adult'), h('b', null, p.time), h('span', null, txt(p.serial || ''))));
+        h('span', null, p.passenger || 'Adult'), h('b', null, p.time), h('span', null, txt(p.serial || ''))));
   }
 
   function HandwrittenNote(p) {
@@ -201,15 +229,29 @@
 
   function CctvStill(p) {
     return h('div', { className: 'rt-paper rt-cctv' },
-      p.src ? h('img', { src: p.src, alt: p.alt || '' }) : h('div', { className: 'rt-cctv-empty' }, p.alt || 'Still image supplied per case. Show places, never victims.'),
-      h('div', { className: 'rt-cctv-burn top', 'aria-hidden': !!p.src || undefined }, h('span', { className: 'rt-cctv-rec' }, p.camera || 'CAM 03'), h('span', null, p.place || '')),
+      p.src ? h('img', { src: p.src, alt: p.alt || '' }) : h('div', { className: 'rt-cctv-empty', 'data-slot': p.slot ? '' : undefined }, p.slot || 'No signal'),
+      h('div', { className: 'rt-cctv-burn top' }, h('span', { className: 'rt-cctv-rec' }, p.camera || 'CAM 03'), h('span', null, p.place || '')),
       h('div', { className: 'rt-cctv-burn bottom' }, h('span', null, p.date), h('span', null, p.timestamp)));
+  }
+
+  function Printout(p) {
+    var cols = p.columns || [];
+    return h('div', { className: 'rt-paper rt-doc' },
+      DocHead({ org: p.org, title: p.title, info: p.info }),
+      h('table', null,
+        h('thead', null, h('tr', null, cols.map(function (c, i) { return h('th', { key: i, className: c.align === 'right' ? 'rt-num' : undefined }, c.label); }))),
+        h('tbody', null, (p.rows || []).map(function (r, i) {
+          var cells = Array.isArray(r) ? r : r.cells;
+          return h('tr', { key: i, className: r.marked ? 'rt-marked' : undefined },
+            cols.map(function (c, j) { return h('td', { key: j, className: cx(c.align === 'right' && 'rt-num', c.wrap ? 'rt-wrap' : 'rt-nowrap') }, txt(cells[j] == null ? '' : cells[j])); }));
+        }))),
+      p.footer ? h('div', { className: 'rt-doc-foot' }, p.footer) : null);
   }
 
   window.RedThread = Object.assign(window.RedThread || {}, {
     Wordmark: Wordmark, Button: Button, CaseTag: CaseTag, ThreadDivider: ThreadDivider,
     GameNote: GameNote, Evidence: Evidence, EvidenceTag: EvidenceTag,
     Receipt: Receipt, PhoneScreenshot: PhoneScreenshot, PhoneRecords: PhoneRecords, BankStatement: BankStatement,
-    Ticket: Ticket, HandwrittenNote: HandwrittenNote, CctvStill: CctvStill
+    Ticket: Ticket, HandwrittenNote: HandwrittenNote, CctvStill: CctvStill, Printout: Printout
   });
 })();

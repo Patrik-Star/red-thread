@@ -1,0 +1,89 @@
+<!-- @dsCard group="Examples" title="Case 001" height=1200 subtitle="Case 001, The Dusk Painting, drawn with the system in route order, Stop 0 to Stop 7. People, businesses and the date are fictional and illustrative. On-site facts stay [verify] until the route is walked, so no code answers are shown." -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Case 001: examples</title>
+<style>
+  .route { display:flex; flex-wrap:wrap; gap:var(--space-12) var(--space-8); padding:var(--space-8); align-items:flex-start; }
+  .route > * { flex:none; max-width:100%; }
+  .route > .rt-note { width:360px; }
+  @media (max-width: 480px) { .route { padding:var(--space-4); gap:var(--space-8); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var RT = window.RedThread, h = React.createElement;
+
+  function Stop0() {
+    var s = React.useState({}), st = s[0], set = s[1];
+    return h(RT.GameNote, { kind: 'unlock', title: 'Find the year on the old post office',
+      meta: 'Stop 0 of 8', metaEnd: 'Te Komititanga', codeLength: 4, numeric: true, codeLabel: 'Year in the stone',
+      codeState: st.state, codeMessage: st.msg || 'Four digits, carved above the entrance. It opens Julian’s phone.',
+      onCode: function () { set({ state: 'wrong', msg: 'That doesn’t hold. Read the stone again, left to right.' }); } },
+      h('p', null, 'Stand in Te Komititanga with your back to the station. Look up at the old Chief Post Office.'));
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'route' },
+
+    h(Stop0),
+
+    h(RT.Evidence, { number: 1, title: 'Julian’s messages', found: 'Julian’s phone', device: true },
+      h(RT.PhoneScreenshot, { contact: 'Marcus Reid', time: '06:14', battery: 9, messages: [
+        { day: 'Wed 3 Feb 18:12' },
+        { from: 'me', text: '7am at Britomart, as agreed. Bring the bank cheque.' },
+        { from: 'them', text: 'You’re making a mistake selling it like this' },
+        { from: 'them', text: 'You’ll regret this.' },
+        { receipt: 'Read 18:31' }
+      ] })),
+
+    h(RT.Evidence, { number: 2, title: 'Dinner for two', found: 'Vulcan Lane' },
+      h(RT.Receipt, { heading: 'Tax invoice', merchant: 'The Fenwick Room', address: 'Vulcan Lane, Auckland', gstNumber: '[redacted]', date: '03/02/2027', time: '21:55', serial: 'Table 4', server: 'Srv: Aroha',
+        lines: [{ qty: 1, item: 'Snapper, brown butter', price: '$42.00' }, { qty: 1, item: 'Lamb rump', price: '$44.00' }, { qty: 1, item: 'Bottle Syrah', price: '$78.00' }],
+        total: '$164.00', gst: '$21.39', paid: 'EFTPOS', card: 'Visa ************', extra: [['Acct', 'Credit'], ['Auth', '[redacted]'], ['Approved', '']],
+        footer: 'Booking: Ashby x2 21:30' })),
+
+    h(RT.Evidence, { number: 3, title: 'Nina’s taxi', found: 'Vulcan Lane' },
+      h(RT.Printout, { org: 'Gannet Cabs', title: 'Trip record', info: [['Account', 'N. Ashby'], ['Date', 'Wed 03 Feb 2027']],
+        columns: [{ label: 'From', wrap: true }, { label: 'Time' }, { label: 'To', wrap: true }, { label: 'Time' }, { label: 'Fare', align: 'right' }],
+        rows: [
+          { cells: ['High St, CBD', '22:05', 'Ponsonby Rd', '22:20', '$31.40'], marked: true },
+          ['[redacted]', '[redacted]', '[redacted]', '[redacted]', '[redacted]']
+        ],
+        footer: '1 of 2 trips shown. Times are NZDT. Full record released on request.' })),
+
+    h(RT.Evidence, { number: 4, title: 'Sam’s account', found: 'Chancery Square' },
+      h(RT.BankStatement, { bank: 'Waitematā Mutual', holder: 'S Tupou', account: '[redacted]-0312-00', period: '15 Jan – 03 Feb 2027', rows: [
+        { date: '15 Jan', details: 'Balance brought forward', balance: '-1,846.20' },
+        { date: '16 Jan', details: 'AP RENT 14 K ROAD', out: '620.00', balance: '-2,466.20' },
+        { date: '20 Jan', details: 'TRANSFER FROM M REID', 'in': '3,000.00', balance: '533.80', marked: true },
+        { date: '21 Jan', details: 'TRANSFER TO QUICKLEND REPAY', out: '480.00', balance: '53.80' },
+        { date: '02 Feb', details: 'EFTPOS AT LIQUOR KARANGAHAPE', out: '38.90', balance: '14.90' }
+      ], footer: 'Overdrawn balances shown with a minus sign. Balances in NZ$.' })),
+
+    h(RT.Evidence, { number: 5, title: 'Camera, 12:15am', found: 'Chancery Square' },
+      h(RT.CctvStill, { camera: 'CAM 02', place: 'CHANCERY SQ', date: '04-02-2027', timestamp: '00:15:07',
+        slot: 'Photo to come: Chancery Square after dark. Bronze benches in frame [verify]. One seated figure, back to camera.' })),
+
+    h(RT.Evidence, { number: 6, title: 'Tessa’s lab note', found: 'Gallery forecourt' },
+      h(RT.HandwrittenNote, { lines: ['Sample 3, sky, lower left.', 'Titanium white present.', 'Not sold as artists’ paint', 'before c. 1920.', 'Can’t be 1893.'], signed: 'T.L.' })),
+
+    h(RT.GameNote, { kind: 'hint', title: 'Read the landline against the plaque', meta: 'Hint 1 of 3', metaEnd: 'Costs 2 min' },
+      h('p', null, 'Julian’s last call went to a number he never saved. The plaque by the statue holds the key to its digits.')),
+
+    h(RT.Evidence, { number: 7, title: 'Julian’s recent calls', found: 'Albert Park', device: true },
+      h(RT.PhoneScreenshot, { app: 'calls', time: '06:14', battery: 9, calls: [
+        { name: 'Marcus Reid', time: '07:19', missed: true },
+        { name: 'Marcus Reid', time: '07:06', missed: true },
+        { name: '09 [redacted]', time: '23:42', kind: 'landline', duration: '2 min' },
+        { name: 'Nina', time: '19:58' }
+      ], label: 'Screenshot of Julian’s phone: recent calls' })),
+
+    h(RT.Evidence, { number: 8, title: 'Door swipes', found: 'University Clock Tower', status: 'locked',
+      lockedText: 'Count the clock faces at the Clock Tower to open this.' },
+      // Decoy while locked: the real log is only sent once the code is right.
+      h(RT.Printout, { org: 'Estates & Security', title: 'Access log', info: [['Door', '[redacted]'], ['Date', '[redacted]']],
+        columns: [{ label: 'Card' }, { label: 'Name', wrap: true }, { label: 'In' }, { label: 'Out' }],
+        rows: [['[redacted]', '[redacted]', '[redacted]', '[redacted]'], ['[redacted]', '[redacted]', '[redacted]', '[redacted]'], ['[redacted]', '[redacted]', '[redacted]', '[redacted]']] }))
+  ));
+</script>
+</body>
+</html>

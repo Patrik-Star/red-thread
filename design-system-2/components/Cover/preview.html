@@ -7,46 +7,58 @@
 <style>
   html, body { margin:0; height:100%; }
   body { background:var(--ground); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
-  .cover { position:relative; height:320px; overflow:hidden; }
-  .art { position:absolute; top:0; left:480px; width:480px; height:320px; overflow:hidden; }
-  .art svg { display:block; width:480px; height:320px; overflow:visible; }
-  .brand { fill:var(--thread); }
-  .tint { fill:var(--manila); }
-  .deep { fill:var(--ink); }
-  .metal { fill:var(--brass); }
-  .sq { rx:var(--radius-tag); }
-  .thread { fill:none; stroke:var(--thread); stroke-width:var(--thread-width-hero); stroke-linecap:round; }
-  .knot { fill:var(--ground); stroke:var(--thread); stroke-width:var(--thread-width); }
-  .words { position:absolute; left:var(--space-12); bottom:var(--space-8); max-width:440px; }
-  .name { margin:0; font-family:var(--font-serif); font-weight:400; font-size:104px; line-height:.95; letter-spacing:-.01em; color:var(--ink); }
-  .tag { margin:var(--space-3) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+  .cover { position:relative; width:960px; height:320px; overflow:hidden; }
+  .words { position:absolute; left:var(--space-12); bottom:var(--space-8); max-width:400px; z-index:3; }
+  .name { margin:0; font-family:var(--font-serif); font-weight:400; font-size:104px; line-height:.92; letter-spacing:-.015em; color:var(--ink); }
+  .promise { margin:var(--space-4) 0 0 4px; font-size:16px; line-height:24px; color:var(--ink-muted); }
+  .piece { position:absolute; transform-origin:24px 24px; }
+  .a { left:492px; top:128px; transform:rotate(-2.5deg); }
+  .b { left:748px; top:22px; transform:rotate(3deg); }
+  .b .rt-hand { width:220px; padding-top:var(--space-4); }
+  .thread { position:absolute; inset:0; z-index:2; pointer-events:none; overflow:visible; }
+  .thread path { fill:none; stroke:var(--thread); stroke-width:var(--thread-width-hero); stroke-linecap:round; }
 </style>
 </head>
 <body>
-<div class="cover">
-<div class="art" aria-hidden="true">
-<svg viewBox="0 0 480 320" width="480" height="320">
-<!--
-  blocks      thread 128×248 slab bled off the top (the spool the thread is pulled from) · manila folder 160×200 + 64×24 tab (evidence) · ink 112×160 bleeding off the right · brass 64×24 tag — ≈27% of 960×320
-  arrangement one tall red slab with satellites on a corkboard: slab, folder, ink block staggered downward left to right, space-8 gutters
-  pattern     literal motif, from the README's thread rule ("one continuous thread, tied off at pins"): one thread-width-hero string leaves the slab, sags through three knots (ground fill, thread ring) and exits the right edge
-  scales      sides in space-8/space-6 multiples; gutters space-8; corners radius-tag; knots r=6 (radius-pill discs); stroke thread-width-hero, knot ring thread-width
--->
-<rect class="brand sq" x="32" y="-8" width="128" height="248" rx="2"/>
-<rect class="metal sq" x="32" y="256" width="64" height="24" rx="2"/>
-<rect class="tint sq" x="192" y="56" width="64" height="32" rx="2"/>
-<rect class="tint sq" x="192" y="72" width="160" height="200" rx="2"/>
-<rect class="deep sq" x="384" y="128" width="112" height="160" rx="2"/>
-<path class="thread" d="M160 112 Q200 130 240 128 Q278 184 320 232 Q376 214 424 176 Q458 128 490 88"/>
-<circle class="knot" cx="240" cy="128" r="6"/>
-<circle class="knot" cx="320" cy="232" r="6"/>
-<circle class="knot" cx="424" cy="176" r="6"/>
-</svg>
+<div class="cover" id="cover">
+  <div class="words">
+    <h1 class="name">Red<br>Thread</h1>
+    <p class="promise">An escape room the size of Auckland.</p>
+  </div>
+  <div class="piece a" id="a"></div>
+  <div class="piece b" id="b"></div>
+  <svg class="thread" id="thread" width="960" height="320" aria-hidden="true"><path id="path"/></svg>
 </div>
-<div class="words">
-<h1 class="name">Red<br>Thread</h1>
-<p class="tag">Follow the thread. Solve the city.</p>
-</div>
-</div>
+<script>
+  /* Two pieces of Case 001 evidence on the table. One thread comes up from
+     below the name, ties off at each tag's punched hole and leaves the frame. */
+  var RT = window.RedThread, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('a')).render(
+    h(RT.Evidence, { number: 2, title: 'Dinner for two', found: 'Vulcan Lane' },
+      h(RT.Receipt, { heading: 'Tax invoice', merchant: 'The Fenwick Room', address: 'Vulcan Lane, Auckland', date: '03/02/2027', time: '21:55', serial: 'Table 4', server: 'Srv: Aroha',
+        lines: [{ qty: 1, item: 'Snapper, brown butter', price: '$42.00' }, { qty: 1, item: 'Lamb rump', price: '$44.00' }, { qty: 1, item: 'Bottle Syrah', price: '$78.00' }],
+        total: '$164.00' })));
+  ReactDOM.createRoot(document.getElementById('b')).render(
+    h(RT.Evidence, { number: 5, title: 'Julian’s planner', found: 'Chancery Square' },
+      h(RT.HandwrittenNote, { lines: ['Tessa,', 'gallery forecourt,', 'lab report'] })));
+
+  function draw() {
+    var box = document.getElementById('cover').getBoundingClientRect();
+    var holes = Array.prototype.map.call(document.querySelectorAll('.rt-tagm-hole'), function (el) {
+      var r = el.getBoundingClientRect();
+      return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
+    });
+    if (holes.length < 2) return;
+    var a = holes[0], b = holes[1];
+    // String sags under its own weight between pins: control points sit below the chord.
+    var d = 'M446 336'
+      + ' Q' + (a[0] - 34) + ' ' + (a[1] + 110) + ' ' + a[0] + ' ' + a[1]
+      + ' Q' + ((a[0] + b[0]) / 2) + ' ' + ((a[1] + b[1]) / 2 + 30) + ' ' + b[0] + ' ' + b[1]
+      + ' Q' + (b[0] + 6) + ' ' + (b[1] - 30) + ' ' + (b[0] + 34) + ' -12';
+    document.getElementById('path').setAttribute('d', d);
+  }
+  requestAnimationFrame(function () { requestAnimationFrame(draw); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(draw);
+</script>
 </body>
 </html>

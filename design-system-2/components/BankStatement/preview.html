@@ -9,11 +9,12 @@
   var RT = window.RedThread, h = React.createElement;
   ReactDOM.createRoot(document.getElementById('root')).render(h('div', { className: 'row' },
     h(RT.Evidence, { number: 9, title: 'Page 2 of a statement', found: 'Victim’s coat pocket' },
-      h(RT.BankStatement, { bank: 'Waitematā Mutual', holder: 'Mr D Hale', account: '12-[redacted]-00', period: '01–14 Feb 2027', rows: [
-        { date: '09 Feb', details: 'Transfer to R. Kaur · ref LEDGER', out: '2,000.00', balance: '3,412.18' },
-        { date: '12 Feb', details: 'Cash withdrawal · Customs St', out: '500.00', balance: '2,912.18' },
-        { date: '14 Feb', details: 'Halfmoon Noodle Bar', out: '60.50', balance: '2,851.68', marked: true },
-        { date: '14 Feb', details: 'Transfer from R. Kaur', 'in': '2,000.00', balance: '4,851.68' }
+      h(RT.BankStatement, { bank: 'Waitematā Mutual', holder: 'Mr D Hale', account: '[redacted]-0047-00', period: '01–14 Feb 2027', rows: [
+        { date: '01 Feb', details: 'Balance brought forward', balance: '5,412.18' },
+        { date: '09 Feb', details: 'TRANSFER TO R KAUR · LEDGER', out: '2,000.00', balance: '3,412.18' },
+        { date: '12 Feb', details: 'ATM WDL CUSTOMS ST AKL', out: '500.00', balance: '2,912.18' },
+        { date: '14 Feb', details: 'EFTPOS HALFMOON NOODLE BAR AKL', out: '60.50', balance: '2,851.68', marked: true },
+        { date: '14 Feb', details: 'TRANSFER FROM R KAUR · LEDGER', 'in': '2,000.00', balance: '4,851.68' }
       ], footer: 'Continued over. Balances in NZ$.' }))));
 </script>
 </body>

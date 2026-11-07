@@ -34,7 +34,7 @@ Everything on a Red Thread screen comes from one of two places, and the team mus
 | Corners | **Rounded.** `radius-note` 16px for notes and panels, `radius-control` 10px for buttons, `radius-tag` 6px for tags and inputs | **Square.** `radius-evidence` 0. The only exception is a phone, because phones are (`radius-device`) |
 | Background | `note` #F3EFE6, an off-white (on screens it sits on `ground`) | `evidence` #FFFFFF, pure white, in both themes |
 | Depth | **Flat.** A `note-line` hairline edge, never a shadow | **Lifted.** `shadow-object`: objects on the table cast shadows |
-| Type | Inter for instructions, IBM Plex Mono for file labels, Instrument Serif for titles | The document's own type: `receipt` (Share Tech Mono), `doc` (Arimo), `hand` (Caveat), the phone's system font |
+| Type | Inter for instructions, IBM Plex Mono for file labels, Instrument Serif for titles | The document's own type: `receipt` (Share Tech Mono), `doc` (Arimo), `hand` (Caveat, in `evidence-pen` blue-black), the phone's system font |
 | Red | `thread`, `thread-text`, `note-accent` | `evidence-mark` only: ink stamps and pen marks |
 
 **The manila tag joins them.** Each object arrives with an `EvidenceTag` clipped to its top edge: a manila tag with the evidence number, status, title and where it was found. The tag is the game's filing, so it's rounded. The object under it is the story, so it's square. See the **Evidence** component.
@@ -74,7 +74,7 @@ Ratio by area, roughly: **80% ground and surface · 10% ink · 9% note, evidence
 **Type.** Three voices:
 - **Instrument Serif** (`display-xl`, `display-l`, `heading`) is the narrator: case names and evidence titles. It's tall and narrow, with a modern editorial cut. Use the italic (`heading-italic`) for one phrase of emphasis only.
 - **Inter** (`title`, `body`, `small`) carries instructions and evidence text. It has to stay readable on a phone in drizzle at 11pm. Body never goes below 16px.
-- **IBM Plex Mono** (`label`, `evidence`) is the file. Uppercase labels are tracked at 0.14em, and records, times and coordinates are set in it.
+- **IBM Plex Mono** (`label`, `evidence`) is the file. Uppercase labels are 12px, tracked at 0.12em (11px and wider tracking washed out in sun), and records, times and coordinates are set in it.
 
 All three are on Google Fonts; `components/bundle.css` loads them.
 
@@ -111,6 +111,7 @@ There's no icon set yet. Until one is drawn, use a thin-stroke outline set at a 
 | `Ticket` | Evidence. Ferry/bus/event ticket with a stub, or `torn` without it. |
 | `HandwrittenNote` | Evidence. A ruled notebook page or a plain scrap, in handwriting. |
 | `CctvStill` | Evidence. A greyscale still with camera, place and time burned in. |
+| `Printout` | Evidence. Any other printed log (taxi trips, door swipes, inventories) with your own columns. |
 
 Any evidence string can contain `[redacted]` to print a black bar.
 
@@ -123,6 +124,7 @@ The game is played **on foot, at night, on a phone**:
 - Tap targets are at least 44px.
 - Never rely on red alone. "Open" and "solved" also differ in label and lightness.
 - Never rely on colour alone for game vs evidence either. White and `note` are only 1.15:1 apart, so shape (rounded vs square) and depth (flat vs shadow) carry the difference. Evidence components expose their text to screen readers; a phone screenshot is labelled as one.
-- Evidence text stays readable: receipt and document type at 13px minimum on screen, handwriting at 22px minimum. Teams can pinch to zoom on any object.
+- Evidence text stays readable: the data on receipts and documents (names, times, amounts) is 13px minimum on screen, and handwriting 22px minimum. Uppercase column heads, field labels and system small print may go to 11px, because real paper does, but they never carry the clue. Teams can pinch to zoom on any object.
+- Every evidence object fits a 360px-wide phone. Documents reflow when their printable width drops below 360px rather than clipping a column, so the column with the clue is never the one off-screen.
 - Use the Paper theme in daylight. Phones are hardest to read outdoors in sun, and a near-white ground with near-black ink wins there. Turn the screen brightness up rather than lightening the text.
 - Keep instructions physical and unambiguous: "Stand under the clock at Britomart, facing the harbour."
