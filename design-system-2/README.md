@@ -34,7 +34,7 @@ Everything on a Red Thread screen comes from one of two places, and the team mus
 | Corners | **Rounded.** `radius-note` 16px for notes and panels, `radius-control` 10px for buttons, `radius-tag` 6px for tags and inputs | **Square.** `radius-evidence` 0. The only exception is a phone, because phones are (`radius-device`) |
 | Background | `note` #F3EFE6, an off-white (on screens it sits on `ground`) | `evidence` #FFFFFF, pure white, in both themes |
 | Depth | **Flat.** A `note-line` hairline edge, never a shadow | **Lifted.** `shadow-object`: objects on the table cast shadows |
-| Type | Inter for instructions, IBM Plex Mono for file labels, Instrument Serif for titles | The document's own type: `receipt` (Share Tech Mono), `doc` (Arimo), `hand` (Caveat, in `evidence-pen` blue-black), the phone's system font |
+| Type | Atkinson Hyperlegible Next for instructions, IBM Plex Mono for file labels, Newsreader for titles | The document's own type: `receipt` (Share Tech Mono), `doc` (Arimo), `hand` (Caveat, in `evidence-pen` blue-black), the phone's system font |
 | Red | `thread`, `thread-text`, `note-accent` | `evidence-mark` only: ink stamps and pen marks |
 
 **The manila tag joins them.** Each object arrives with an `EvidenceTag` clipped to its top edge: a manila tag with the evidence number, status, title and where it was found. The tag is the game's filing, so it's rounded. The object under it is the story, so it's square. See the **Evidence** component.
@@ -42,7 +42,7 @@ Everything on a Red Thread screen comes from one of two places, and the team mus
 Three tests:
 1. **Cover the words.** From shape and shadow alone, can you tell which pieces are the game and which are evidence? If not, something is the wrong shape.
 2. **No white notes, no off-white evidence.** The game never uses #FFF; evidence never uses `note`.
-3. **The game never writes by hand.** Handwriting, thermal print and someone else's printer are evidence. The game speaks in Inter.
+3. **The game never writes by hand.** Handwriting, thermal print and someone else's printer are evidence. The game speaks in Atkinson Hyperlegible Next.
 
 ## 3. Voice: content fundamentals
 
@@ -72,11 +72,11 @@ Red Thread speaks like a **calm case officer briefing a capable team**: precise,
 Ratio by area, roughly: **80% ground and surface · 10% ink · 9% note, evidence, manila and brass · 1% thread.** If a layout looks red, there's too much red.
 
 **Type.** Three voices:
-- **Instrument Serif** (`display-xl`, `display-l`, `heading`) is the narrator: case names and evidence titles. It's tall and narrow, with a modern editorial cut. Use the italic (`heading-italic`) for one phrase of emphasis only.
-- **Inter** (`title`, `body`, `small`) carries instructions and evidence text. It has to stay readable on a phone in drizzle at 11pm. Body never goes below 16px.
+- **Newsreader** (`display-xl`, `display-l`, `heading`) is the narrator: case names and evidence titles, set like a headline on tomorrow's crime page. It was drawn for news reading and has optical sizes, so it stays sharp from a 24px evidence tag to a poster. Use the italic (`heading-italic`) for one phrase of emphasis only.
+- **Atkinson Hyperlegible Next** (`title`, `body`, `small`) carries instructions and evidence text. It was drawn for low-vision readers, so 0 and O, and I, l and 1, never look alike, which matters when a team copies a code off stone in sun or drizzle at 11pm. Body never goes below 16px.
 - **IBM Plex Mono** (`label`, `evidence`) is the file. Uppercase labels are 12px, tracked at 0.12em (11px and wider tracking washed out in sun), and records, times and coordinates are set in it.
 
-All three are on Google Fonts; `components/bundle.css` loads them.
+All three are free on Google Fonts (SIL Open Font License). The preview loads them from Google Fonts; in the Next.js app, `tailwind/fonts.ts` self-hosts them with `next/font`. Chosen on 2026-11-07 to replace Instrument Serif and Inter, the pairing most generated interfaces default to.
 
 Evidence brings its own type, so it never looks like the game: **Share Tech Mono** (`receipt`) for thermal receipts and tickets, **Arimo** (`doc-body`) for printouts such as phone records and statements, **Caveat** (`hand`, 24px, never below 22px) for handwritten notes, and the phone's system font inside screenshots. None of these is used for the game's own words.
 
@@ -92,7 +92,7 @@ There's no icon set yet. Until one is drawn, use a thin-stroke outline set at a 
 
 ## 6. Logo
 
-**No logo exists yet.** Until one is designed, set the name as a wordmark: "Red Thread" in Instrument Serif, `ink`, with a single thread passing under it from the left, tied off at a pin on the right. See the **Wordmark** component. It's a placeholder lockup, not a final mark.
+**No logo exists yet.** Until one is designed, set the name as a wordmark: "Red Thread" in Newsreader, `ink`, with a single thread passing under it from the left, tied off at a pin on the right. See the **Wordmark** component. It's a placeholder lockup, not a final mark.
 
 ## 7. Components
 
@@ -115,7 +115,7 @@ There's no icon set yet. Until one is drawn, use a thin-stroke outline set at a 
 
 Any evidence string can contain `[redacted]` to print a black bar.
 
-Components are React 18, exported as `window.RedThread`, and styled with the tokens via `components/bundle.css`.
+Components are React 18, exported as `window.RedThread`, and styled with the tokens via `components/bundle.css`. They run in the standalone preview. The app itself is built with Next.js, Tailwind CSS v4 and shadcn/ui; see section 9.
 
 ## 8. Accessibility, outdoors
 
@@ -128,3 +128,14 @@ The game is played **on foot, at night, on a phone**:
 - Every evidence object fits a 360px-wide phone. Documents reflow when their printable width drops below 360px rather than clipping a column, so the column with the clue is never the one off-screen.
 - Use the Paper theme in daylight. Phones are hardest to read outdoors in sun, and a near-white ground with near-black ink wins there. Turn the screen brightness up rather than lightening the text.
 - Keep instructions physical and unambiguous: "Stand under the clock at Britomart, facing the harbour."
+
+## 9. In the app: Next.js, Tailwind CSS and shadcn/ui
+
+The app is built with Next.js (App Router), Tailwind CSS v4 and shadcn/ui. `tailwind/` carries the system across:
+
+- **`tailwind/theme.css`** is generated from `tokens.json` alongside `tokens.css`. It contains every colour, radius, font and type style as Tailwind utilities (`bg-note`, `rounded-evidence`, `type-label`, `surface-evidence`), and maps shadcn's colour roles onto the tokens (`primary` is the thread, `destructive` is ink). Themes switch on `data-theme="night" | "paper"`, and shadcn's `dark:` classes follow Night.
+- **`tailwind/fonts.ts`** self-hosts the six fonts with `next/font`.
+- **`tailwind/README.md`** gives the setup steps and five small edits to the stock shadcn components: 44px buttons and inputs, ink rather than red for destructive, `surface-note` for game panels, and no evidence inside shadcn components.
+
+The rules in this book still decide. Where a shadcn default disagrees with them (shadows on cards, red destructive buttons, 36px buttons), `theme.css` or the edits in `tailwind/README.md` bring it back in line.
+

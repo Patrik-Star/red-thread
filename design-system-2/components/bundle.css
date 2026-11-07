@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Share+Tech+Mono&family=Arimo:wght@400;700&family=Caveat:wght@500;600&display=swap');
+/* Fonts are loaded by the host: the preview links Google Fonts, the Next.js app uses tailwind/fonts.ts (next/font). */
 
 ::selection { background: var(--thread); color: var(--on-thread); }
 body { margin: 0; font-family: var(--font-sans); background: var(--ground); color: var(--ink); -webkit-font-smoothing: antialiased; }

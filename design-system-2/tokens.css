@@ -71,19 +71,19 @@
   --radius-pill: 999px;
   --thread-width: 2px;
   --thread-width-hero: 3px;
-  --font-serif: "Instrument Serif", "Times New Roman", Georgia, serif;
-  --font-sans: Inter, "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-serif: Newsreader, "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Helvetica Neue", Arial, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   --font-receipt: "Share Tech Mono", "Courier New", ui-monospace, monospace;
   --font-doc: Arimo, Arial, "Helvetica Neue", Helvetica, sans-serif;
   --font-hand: Caveat, "Segoe Print", "Bradley Hand", cursive;
-  --font-device: -apple-system, "SF Pro Text", Inter, system-ui, sans-serif;
+  --font-device: -apple-system, "SF Pro Text", system-ui, "Helvetica Neue", Arial, sans-serif;
 }
 
-.display-xl { font-family: var(--font-serif); font-size: 96px; line-height: 0.95; font-weight: 400; letter-spacing: -0.01em; }
-.display-l { font-family: var(--font-serif); font-size: 64px; line-height: 1; font-weight: 400; letter-spacing: -0.01em; }
-.heading { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; }
-.heading-italic { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; font-style: italic; }
+.display-xl { font-family: var(--font-serif); font-size: 88px; line-height: 1; font-weight: 400; letter-spacing: -0.02em; }
+.display-l { font-family: var(--font-serif); font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; }
+.heading { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em; }
+.heading-italic { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em; font-style: italic; }
 .title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 600; }
 .body { font-family: var(--font-sans); font-size: 16px; line-height: 26px; font-weight: 400; }
 .small { font-family: var(--font-sans); font-size: 14px; line-height: 22px; font-weight: 400; }

@@ -5,6 +5,7 @@
 
 Writes, next to tokens.json:
   tokens.css    CSS custom properties for both themes + one class per type style
+  tailwind/theme.css  the same tokens for Tailwind CSS v4 and shadcn/ui
   preview.html  ONE self-contained page (tokens, styles, React, components and
                 every components/*/preview.html inlined). Double-click it to open
                 in a browser. Needs internet only for the Google Fonts.
@@ -78,6 +79,175 @@ def build_tokens_css():
 tokens_css, themes = build_tokens_css()
 (DS / "tokens.css").write_text(tokens_css, encoding="utf-8")
 
+# ---------- tailwind/theme.css (Tailwind CSS v4 + shadcn/ui) ----------
+NEXT_FONT_VARS = {  # family key -> CSS variable set by tailwind/fonts.ts (next/font)
+    "serif": "--font-newsreader", "sans": "--font-atkinson", "mono": "--font-plex-mono",
+    "receipt": "--font-share-tech-mono", "doc": "--font-arimo", "hand": "--font-caveat",
+}
+
+# shadcn/ui role -> Red Thread token. Destructive is ink, not red: the thread is the
+# only red, and a wrong answer is said in words (README section 3).
+SHADCN = [
+    ("background", "ground"), ("foreground", "ink"),
+    ("card", "surface"), ("card-foreground", "ink"),
+    ("popover", "surface-raised"), ("popover-foreground", "ink"),
+    ("primary", "thread"), ("primary-foreground", "on-thread"),
+    ("secondary", "surface-raised"), ("secondary-foreground", "ink"),
+    ("muted", "surface"), ("muted-foreground", "ink-muted"),
+    ("accent", "surface-raised"), ("accent-foreground", "ink"),
+    ("destructive", "ink"),
+    ("border", "line"), ("input", "line-strong"), ("ring", "focus"),
+    ("chart-1", "thread"), ("chart-2", "brass"), ("chart-3", "solved"), ("chart-4", "ink-muted"), ("chart-5", "manila"),
+    ("sidebar", "surface"), ("sidebar-foreground", "ink"),
+    ("sidebar-primary", "thread"), ("sidebar-primary-foreground", "on-thread"),
+    ("sidebar-accent", "surface-raised"), ("sidebar-accent-foreground", "ink"),
+    ("sidebar-border", "line"), ("sidebar-ring", "focus"),
+]
+
+
+def build_tailwind_css():
+    themes = [t["id"] for t in tokens["color"]["themes"]]
+    first = themes[0]
+    color_tokens = tokens["color"]["tokens"]
+    shadows = tokens.get("shadow", {}).get("tokens", [])
+
+    def val(v, th):
+        return v if isinstance(v, str) else v.get(th, v.get(first))
+
+    def ref(v):
+        m = re.fullmatch(r"\{([^}]+)\}", v)
+        return f"var(--{m.group(1)})" if m else v
+
+    def font_stack(key, stack):
+        var = NEXT_FONT_VARS.get(key)
+        if not var:
+            return stack
+        head, _, rest = stack.partition(",")
+        return f"var({var}, {head.strip()})" + ("," + rest if rest else "")
+
+    o = [f"/* {tokens['name']} design system v2 for Tailwind CSS v4 and shadcn/ui.",
+         "   Generated from tokens.json by scripts/build_preview.py. Do not edit by hand.",
+         "   See tailwind/README.md. In app/globals.css, after @import \"tailwindcss\": */",
+         "", "/* Themes: <html data-theme=\"night\"> (default) or \"paper\". shadcn's dark: classes follow Night. */",
+         '@custom-variant dark (&:where([data-theme="night"], [data-theme="night"] *));',
+         '@custom-variant paper (&:where([data-theme="paper"], [data-theme="paper"] *));', ""]
+
+    for i, th in enumerate(themes):
+        sel = f':root, [data-theme="{th}"]' if i == 0 else f'[data-theme="{th}"]'
+        o.append(sel + " {")
+        o.append(f"  color-scheme: {'dark' if th == 'night' else 'light'};")
+        for t in color_tokens:
+            v = t["value"]
+            if i > 0 and (isinstance(v, str) or th not in v):
+                continue
+            o.append(f"  --{t['name']}: {ref(val(v, th))};")
+        for t in shadows:
+            v = t["value"]
+            if i > 0 and (isinstance(v, str) or th not in v):
+                continue
+            o.append(f"  --rt-{t['name']}: {val(v, th)};")
+        if i == 0:
+            o.append("")
+            o.append("  /* shadcn/ui roles */")
+            for role, tok in SHADCN:
+                o.append(f"  --{role}: var(--{tok});")
+            o.append("  --radius: 10px;")
+        o.append("}")
+        o.append("")
+
+    o.append(":root {")
+    o.append("  /* Names the component CSS (components/bundle.css) reads */")
+    for fam in ("spacing", "stroke"):
+        for t in tokens.get(fam, {}).get("tokens", []):
+            o.append(f"  --{t['name']}: {t['value']};")
+    for t in shadows:
+        o.append(f"  --{t['name']}: var(--rt-{t['name']});")
+    o.append("}")
+    o.append("")
+
+    o.append("@theme static {")
+    o.append("  /* font-serif (titles), font-sans (instructions), font-mono (labels), then evidence faces */")
+    for key, stack in tokens["type"]["families"].items():
+        o.append(f"  --font-{key}: {font_stack(key, stack)};")
+    o.append("")
+    o.append("  /* rounded-evidence (0) · rounded-tag · rounded-control · rounded-note · rounded-device · rounded-pill */")
+    for t in tokens["radius"]["tokens"]:
+        o.append(f"  --{t['name']}: {t['value']};")
+    o.append("  /* shadcn's scale, pinned to the system's radii: sm = tag (badges, checkboxes),")
+    o.append("     md = control (buttons, inputs, selects), lg and xl = note (dialogs, cards, sheets) */")
+    o.append("  --radius-sm: 6px;\n  --radius-md: 10px;\n  --radius-lg: 16px;\n  --radius-xl: 16px;")
+    o.append("")
+    o.append("  /* The game is flat (README section 2). shadcn puts shadow-xs on inputs and buttons and")
+    o.append("     shadow-sm on cards; both become a transparent shadow (not `none`, which would break the focus-ring list). md and up stay for menus and dialogs, which float. */")
+    o.append("  --shadow-2xs: 0 0 #0000;\n  --shadow-xs: 0 0 #0000;\n  --shadow-sm: 0 0 #0000;")
+    o.append("")
+    o.append("  /* text-display-xl, text-title, text-label ... (size, leading, tracking, weight).")
+    o.append("     A style that shares a colour's name (evidence) is left out: use type-evidence. */")
+    colour_names = {t["name"] for t in color_tokens}
+    for g in tokens["type"]["groups"]:
+        for st in g["styles"]:
+            n = st["name"]
+            if n in colour_names:
+                continue
+            o.append(f"  --text-{n}: {st['fontSize']};")
+            o.append(f"  --text-{n}--line-height: {st['lineHeight']};")
+            if "letterSpacing" in st:
+                o.append(f"  --text-{n}--letter-spacing: {st['letterSpacing']};")
+            o.append(f"  --text-{n}--font-weight: {st['fontWeight']};")
+    o.append("}")
+    o.append("")
+
+    o.append("@theme inline {")
+    o.append("  /* bg-ground, text-ink, bg-note, text-evidence-ink, border-manila-line ... */")
+    for t in color_tokens:
+        o.append(f"  --color-{t['name']}: var(--{t['name']});")
+    o.append("")
+    o.append("  /* shadcn/ui: bg-background, text-primary-foreground, border-border ... */")
+    for role, _ in SHADCN:
+        o.append(f"  --color-{role}: var(--{role});")
+    o.append("")
+    o.append("  /* shadow-object: evidence only. The game is flat. */")
+    o.append("  --shadow-object: var(--rt-shadow-object);")
+    o.append("}")
+    o.append("")
+
+    o.append("/* type-display-xl, type-title, type-label ...: the whole style, family included */")
+    for g in tokens["type"]["groups"]:
+        for st in g["styles"]:
+            fam = st.get("family", g["family"])
+            props = [f"font-family: var(--font-{fam})", f"font-size: {st['fontSize']}",
+                     f"line-height: {st['lineHeight']}", f"font-weight: {st['fontWeight']}"]
+            if "letterSpacing" in st:
+                props.append(f"letter-spacing: {st['letterSpacing']}")
+            if "fontStyle" in st:
+                props.append(f"font-style: {st['fontStyle']}")
+            if st["name"] == "label":
+                props.append("text-transform: uppercase")
+            if st["name"] in ("evidence", "doc-body", "receipt"):
+                props.append("font-variant-numeric: tabular-nums")
+            o.append(f"@utility type-{st['name']} {{ {'; '.join(props)}; }}")
+    o.append("")
+    o.append("/* The two layers (README section 2) as single utilities */")
+    o.append("@utility surface-note { background-color: var(--note); color: var(--note-ink); border: 1px solid var(--note-line); border-radius: var(--radius-note); box-shadow: none; }")
+    o.append("@utility surface-evidence { background-color: var(--evidence); color: var(--evidence-ink); border-radius: var(--radius-evidence); box-shadow: var(--rt-shadow-object); }")
+    o.append("@utility surface-manila { background-color: var(--manila); color: var(--manila-ink); border-radius: var(--radius-tag); }")
+    o.append("@utility drop-object { filter: var(--rt-shadow-object-drop); }")
+    o.append("")
+    o.append("@layer base {")
+    o.append("  * { border-color: var(--border); outline-color: color-mix(in oklab, var(--ring) 50%, transparent); }")
+    o.append("  html { -webkit-text-size-adjust: 100%; }")
+    o.append("  body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }")
+    o.append("  ::selection { background-color: var(--thread); color: var(--on-thread); }")
+    o.append("  input, textarea { caret-color: var(--thread-text); }")
+    o.append("  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }")
+    o.append("  .tabular, table, time { font-variant-numeric: tabular-nums; }")
+    o.append("}")
+    return "\n".join(o) + "\n"
+
+
+(DS / "tailwind").mkdir(exist_ok=True)
+(DS / "tailwind" / "theme.css").write_text(build_tailwind_css(), encoding="utf-8")
+
 # ---------- preview.html ----------
 bundle_css = (DS / "components" / "bundle.css").read_text(encoding="utf-8")
 bundle_js = (DS / "components" / "bundle.js").read_text(encoding="utf-8")
@@ -113,13 +283,24 @@ for name in order:
     })
 
 
+# Google Fonts for the standalone preview only. The app self-hosts them (tailwind/fonts.ts).
+FONTS_LINK = (
+    '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400'
+    '&family=Atkinson+Hyperlegible+Next:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500'
+    '&family=Share+Tech+Mono&family=Arimo:wght@400;700&family=Caveat:wght@500;600&display=swap">'
+)
+
+
 def js_str(s):
     # JSON string, safe inside an inline <script>.
     return json.dumps(s).replace("</", "<\\/").replace("<!--", "<\\!--")
 
 
 shared_head = (
-    "<style>" + tokens_css + "</style>"
+    FONTS_LINK
+    + "<style>" + tokens_css + "</style>"
     "<style>" + bundle_css + "</style>"
     "<script>" + react + "</script>"
     "<script>" + react_dom + "</script>"
@@ -139,6 +320,7 @@ page = f"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(tokens['name'])}: design system preview</title>
 <!-- Generated by design-system-2/scripts/build_preview.py. Do not edit by hand. -->
+{FONTS_LINK}
 <style>
 {bundle_css}
 </style>
@@ -236,4 +418,5 @@ page = f"""<!doctype html>
 """
 (DS / "preview.html").write_text(page, encoding="utf-8")
 print(f"wrote {DS / 'tokens.css'}")
+print(f"wrote {DS / 'tailwind' / 'theme.css'}")
 print(f"wrote {DS / 'preview.html'} ({len(page) // 1024} KB, {len(cards)} cards)")

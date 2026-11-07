@@ -1,0 +1,285 @@
+/* Red Thread design system v2 for Tailwind CSS v4 and shadcn/ui.
+   Generated from tokens.json by scripts/build_preview.py. Do not edit by hand.
+   See tailwind/README.md. In app/globals.css, after @import "tailwindcss": */
+
+/* Themes: <html data-theme="night"> (default) or "paper". shadcn's dark: classes follow Night. */
+@custom-variant dark (&:where([data-theme="night"], [data-theme="night"] *));
+@custom-variant paper (&:where([data-theme="paper"], [data-theme="paper"] *));
+
+:root, [data-theme="night"] {
+  color-scheme: dark;
+  --ground: #0b0b0d;
+  --surface: #141417;
+  --surface-raised: #1d1d22;
+  --line: #2a2a31;
+  --line-strong: #70707b;
+  --ink: #ece8e1;
+  --ink-muted: #9a958d;
+  --thread: #e4142c;
+  --thread-text: #ff5a6a;
+  --thread-deep: #a00c22;
+  --on-thread: #ffffff;
+  --focus: #ff5a6a;
+  --manila: #d6c8a8;
+  --manila-ink: #1a1714;
+  --manila-thread: #8f0d22;
+  --manila-line: #a8987a;
+  --note: #f3efe6;
+  --note-ink: #16140f;
+  --note-ink-muted: #5a554b;
+  --note-accent: #b00e27;
+  --note-line: #d3ccbc;
+  --evidence: #ffffff;
+  --evidence-ink: #1c1c1e;
+  --evidence-ink-muted: #5e5e62;
+  --evidence-line: #d4d4d8;
+  --evidence-mark: #8f0d22;
+  --evidence-pen: #25305a;
+  --device: #2b2b2e;
+  --brass: #b8935a;
+  --solved: #6cc4ae;
+  --rt-shadow-object: 0 1px 0 rgba(0,0,0,0.6), 0 14px 32px rgba(0,0,0,0.55);
+  --rt-shadow-object-drop: drop-shadow(0 1px 0 rgba(0,0,0,0.6)) drop-shadow(0 12px 18px rgba(0,0,0,0.5));
+
+  /* shadcn/ui roles */
+  --background: var(--ground);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--ink);
+  --primary: var(--thread);
+  --primary-foreground: var(--on-thread);
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--surface-raised);
+  --accent-foreground: var(--ink);
+  --destructive: var(--ink);
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--focus);
+  --chart-1: var(--thread);
+  --chart-2: var(--brass);
+  --chart-3: var(--solved);
+  --chart-4: var(--ink-muted);
+  --chart-5: var(--manila);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--thread);
+  --sidebar-primary-foreground: var(--on-thread);
+  --sidebar-accent: var(--surface-raised);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--focus);
+  --radius: 10px;
+}
+
+[data-theme="paper"] {
+  color-scheme: light;
+  --ground: #fbfaf7;
+  --surface: #f2f0eb;
+  --surface-raised: #e9e6df;
+  --line: #dcd8cf;
+  --line-strong: #857f74;
+  --ink: #16140f;
+  --ink-muted: #58534a;
+  --thread: #e4142c;
+  --thread-text: #c20f2b;
+  --thread-deep: #a00c22;
+  --focus: #c20f2b;
+  --manila: #d6c8a8;
+  --brass: #7d5f2e;
+  --solved: #1f6f5c;
+  --rt-shadow-object: 0 1px 1px rgba(22,20,15,0.22), 0 10px 24px rgba(22,20,15,0.2);
+  --rt-shadow-object-drop: drop-shadow(0 1px 1px rgba(22,20,15,0.26)) drop-shadow(0 8px 14px rgba(22,20,15,0.2));
+}
+
+:root {
+  /* Names the component CSS (components/bundle.css) reads */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --thread-width: 2px;
+  --thread-width-hero: 3px;
+  --shadow-object: var(--rt-shadow-object);
+  --shadow-object-drop: var(--rt-shadow-object-drop);
+}
+
+@theme static {
+  /* font-serif (titles), font-sans (instructions), font-mono (labels), then evidence faces */
+  --font-serif: var(--font-newsreader, Newsreader), "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-atkinson, "Atkinson Hyperlegible Next"), "Atkinson Hyperlegible", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, Menlo, monospace;
+  --font-receipt: var(--font-share-tech-mono, "Share Tech Mono"), "Courier New", ui-monospace, monospace;
+  --font-doc: var(--font-arimo, Arimo), Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-hand: var(--font-caveat, Caveat), "Segoe Print", "Bradley Hand", cursive;
+  --font-device: -apple-system, "SF Pro Text", system-ui, "Helvetica Neue", Arial, sans-serif;
+
+  /* rounded-evidence (0) · rounded-tag · rounded-control · rounded-note · rounded-device · rounded-pill */
+  --radius-evidence: 0;
+  --radius-tag: 6px;
+  --radius-control: 10px;
+  --radius-note: 16px;
+  --radius-device: 52px;
+  --radius-pill: 999px;
+  /* shadcn's scale, pinned to the system's radii: sm = tag (badges, checkboxes),
+     md = control (buttons, inputs, selects), lg and xl = note (dialogs, cards, sheets) */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 16px;
+
+  /* The game is flat (README section 2). shadcn puts shadow-xs on inputs and buttons and
+     shadow-sm on cards; both become a transparent shadow (not `none`, which would break the focus-ring list). md and up stay for menus and dialogs, which float. */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+
+  /* text-display-xl, text-title, text-label ... (size, leading, tracking, weight).
+     A style that shares a colour's name (evidence) is left out: use type-evidence. */
+  --text-display-xl: 88px;
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.02em;
+  --text-display-xl--font-weight: 400;
+  --text-display-l: 60px;
+  --text-display-l--line-height: 1.04;
+  --text-display-l--letter-spacing: -0.015em;
+  --text-display-l--font-weight: 400;
+  --text-heading: 36px;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.01em;
+  --text-heading--font-weight: 400;
+  --text-heading-italic: 36px;
+  --text-heading-italic--line-height: 1.1;
+  --text-heading-italic--letter-spacing: -0.01em;
+  --text-heading-italic--font-weight: 400;
+  --text-title: 20px;
+  --text-title--line-height: 28px;
+  --text-title--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body--font-weight: 400;
+  --text-small: 14px;
+  --text-small--line-height: 22px;
+  --text-small--font-weight: 400;
+  --text-label: 12px;
+  --text-label--line-height: 16px;
+  --text-label--letter-spacing: 0.12em;
+  --text-label--font-weight: 500;
+  --text-doc-body: 13px;
+  --text-doc-body--line-height: 18px;
+  --text-doc-body--font-weight: 400;
+  --text-receipt: 13px;
+  --text-receipt--line-height: 17px;
+  --text-receipt--font-weight: 400;
+  --text-hand: 24px;
+  --text-hand--line-height: 28px;
+  --text-hand--font-weight: 500;
+}
+
+@theme inline {
+  /* bg-ground, text-ink, bg-note, text-evidence-ink, border-manila-line ... */
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-thread: var(--thread);
+  --color-thread-text: var(--thread-text);
+  --color-thread-deep: var(--thread-deep);
+  --color-on-thread: var(--on-thread);
+  --color-focus: var(--focus);
+  --color-manila: var(--manila);
+  --color-manila-ink: var(--manila-ink);
+  --color-manila-thread: var(--manila-thread);
+  --color-manila-line: var(--manila-line);
+  --color-note: var(--note);
+  --color-note-ink: var(--note-ink);
+  --color-note-ink-muted: var(--note-ink-muted);
+  --color-note-accent: var(--note-accent);
+  --color-note-line: var(--note-line);
+  --color-evidence: var(--evidence);
+  --color-evidence-ink: var(--evidence-ink);
+  --color-evidence-ink-muted: var(--evidence-ink-muted);
+  --color-evidence-line: var(--evidence-line);
+  --color-evidence-mark: var(--evidence-mark);
+  --color-evidence-pen: var(--evidence-pen);
+  --color-device: var(--device);
+  --color-brass: var(--brass);
+  --color-solved: var(--solved);
+
+  /* shadcn/ui: bg-background, text-primary-foreground, border-border ... */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* shadow-object: evidence only. The game is flat. */
+  --shadow-object: var(--rt-shadow-object);
+}
+
+/* type-display-xl, type-title, type-label ...: the whole style, family included */
+@utility type-display-xl { font-family: var(--font-serif); font-size: 88px; line-height: 1; font-weight: 400; letter-spacing: -0.02em; }
+@utility type-display-l { font-family: var(--font-serif); font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; }
+@utility type-heading { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em; }
+@utility type-heading-italic { font-family: var(--font-serif); font-size: 36px; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em; font-style: italic; }
+@utility type-title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 600; }
+@utility type-body { font-family: var(--font-sans); font-size: 16px; line-height: 26px; font-weight: 400; }
+@utility type-small { font-family: var(--font-sans); font-size: 14px; line-height: 22px; font-weight: 400; }
+@utility type-label { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+@utility type-evidence { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; font-variant-numeric: tabular-nums; }
+@utility type-doc-body { font-family: var(--font-doc); font-size: 13px; line-height: 18px; font-weight: 400; font-variant-numeric: tabular-nums; }
+@utility type-receipt { font-family: var(--font-receipt); font-size: 13px; line-height: 17px; font-weight: 400; font-variant-numeric: tabular-nums; }
+@utility type-hand { font-family: var(--font-hand); font-size: 24px; line-height: 28px; font-weight: 500; }
+
+/* The two layers (README section 2) as single utilities */
+@utility surface-note { background-color: var(--note); color: var(--note-ink); border: 1px solid var(--note-line); border-radius: var(--radius-note); box-shadow: none; }
+@utility surface-evidence { background-color: var(--evidence); color: var(--evidence-ink); border-radius: var(--radius-evidence); box-shadow: var(--rt-shadow-object); }
+@utility surface-manila { background-color: var(--manila); color: var(--manila-ink); border-radius: var(--radius-tag); }
+@utility drop-object { filter: var(--rt-shadow-object-drop); }
+
+@layer base {
+  * { border-color: var(--border); outline-color: color-mix(in oklab, var(--ring) 50%, transparent); }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  ::selection { background-color: var(--thread); color: var(--on-thread); }
+  input, textarea { caret-color: var(--thread-text); }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .tabular, table, time { font-variant-numeric: tabular-nums; }
+}
